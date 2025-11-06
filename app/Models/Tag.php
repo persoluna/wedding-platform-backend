@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Tag extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'type',
+    ];
+
+    public function agencies()
+    {
+        return $this->morphedByMany(Agency::class, 'taggable');
+    }
+
+    public function vendors()
+    {
+        return $this->morphedByMany(Vendor::class, 'taggable');
+    }
+}
