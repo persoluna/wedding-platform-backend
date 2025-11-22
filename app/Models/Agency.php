@@ -79,6 +79,11 @@ class Agency extends Model implements HasMedia
             ->withTimestamps();
     }
 
+    public function ownedVendors(): HasMany
+    {
+        return $this->hasMany(Vendor::class, 'owning_agency_id');
+    }
+
     public function approvedVendors(): BelongsToMany
     {
         return $this->vendors()->wherePivot('status', 'approved');

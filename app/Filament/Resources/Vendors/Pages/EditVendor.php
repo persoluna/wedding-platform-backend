@@ -8,6 +8,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditVendor extends EditRecord
 {
@@ -21,5 +22,16 @@ class EditVendor extends EditRecord
             ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $user = Auth::user();
+
+        if ($user?->isAgency()) {
+            $data['owning_agency_id'] = optional($user->agency)->getKey();
+        }
+
+        return $data;
     }
 }

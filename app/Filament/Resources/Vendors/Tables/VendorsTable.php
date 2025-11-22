@@ -21,6 +21,16 @@ class VendorsTable
             ->columns([
                 TextColumn::make('user.name')
                     ->searchable(),
+                TextColumn::make('owningAgency.business_name')
+                    ->label('Owning agency')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('createdBy.name')
+                    ->label('Created by')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->searchable(),

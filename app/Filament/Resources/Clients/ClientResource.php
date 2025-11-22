@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class ClientResource extends Resource
 {
@@ -58,11 +59,32 @@ class ClientResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query->whereKey(-1);
+        }
+
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        if ($user->isClient()) {
+            return $query->where('clients.user_id', $user->id);
+        }
+
+        return $query->whereKey(-1);
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
     }
 }

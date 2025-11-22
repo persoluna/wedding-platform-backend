@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class VendorResource extends Resource
 {
@@ -58,11 +59,54 @@ class VendorResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query->whereKey(-1);
+        }
+
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        if ($user->isVendor()) {
+            return $query->where('vendors.user_id', $user->id);
+        }
+
+        if ($user->isAgency()) {
+            $agency = $user->agency;
+
+            if (! $agency) {
+                return $query->whereKey(-1);
+            }
+
+            $agencyId = $agency->getKey();
+
+            return $query->where(function (Builder $builder) use ($agencyId): void {
+                $builder
+                    ->where('vendors.owning_agency_id', $agencyId)
+                    ->orWhere(function (Builder $nested) use ($agencyId): void {
+                        $nested
+                            ->whereNull('vendors.owning_agency_id')
+                            ->whereHas('agencies', static function (Builder $relation) use ($agencyId): void {
+                                $relation->whereKey($agencyId);
+                            });
+                    });
+            });
+        }
+
+        return $query->whereKey(-1);
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
     }
 }

@@ -20,6 +20,12 @@ class VendorInfolist
                     ->placeholder('-'),
                 TextEntry::make('business_name'),
                 TextEntry::make('slug'),
+                TextEntry::make('owningAgency.business_name')
+                    ->label('Owning agency')
+                    ->placeholder('-'),
+                TextEntry::make('createdBy.name')
+                    ->label('Created by')
+                    ->placeholder('-'),
                 TextEntry::make('description')
                     ->placeholder('-')
                     ->columnSpanFull(),

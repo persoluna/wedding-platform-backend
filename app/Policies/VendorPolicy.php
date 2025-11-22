@@ -4,67 +4,115 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
+use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class VendorPolicy
 {
     use HandlesAuthorization;
-    
-    public function viewAny(AuthUser $authUser): bool
+
+    public function before(User $authUser): ?bool
     {
+        if ($authUser->hasRole('super_admin')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    public function viewAny(User $authUser): bool
+    {
+        if (! $authUser->isAdmin() && ! $authUser->isAgency() && ! $authUser->isVendor()) {
+            return false;
+        }
+
         return $authUser->can('ViewAny:Vendor');
     }
 
-    public function view(AuthUser $authUser, Vendor $vendor): bool
+    public function view(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('View:Vendor');
+        return $authUser->can('View:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function create(AuthUser $authUser): bool
+    public function create(User $authUser): bool
     {
+        if (! $authUser->isAdmin() && ! $authUser->isAgency()) {
+            return false;
+        }
+
         return $authUser->can('Create:Vendor');
     }
 
-    public function update(AuthUser $authUser, Vendor $vendor): bool
+    public function update(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('Update:Vendor');
+        return $authUser->can('Update:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function delete(AuthUser $authUser, Vendor $vendor): bool
+    public function delete(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('Delete:Vendor');
+        return $authUser->can('Delete:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function restore(AuthUser $authUser, Vendor $vendor): bool
+    public function restore(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('Restore:Vendor');
+        return $authUser->can('Restore:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function forceDelete(AuthUser $authUser, Vendor $vendor): bool
+    public function forceDelete(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('ForceDelete:Vendor');
+        return $authUser->can('ForceDelete:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function forceDeleteAny(AuthUser $authUser): bool
+    public function forceDeleteAny(User $authUser): bool
     {
-        return $authUser->can('ForceDeleteAny:Vendor');
+        return $authUser->isAdmin()
+            && $authUser->can('ForceDeleteAny:Vendor');
     }
 
-    public function restoreAny(AuthUser $authUser): bool
+    public function restoreAny(User $authUser): bool
     {
-        return $authUser->can('RestoreAny:Vendor');
+        return $authUser->isAdmin()
+            && $authUser->can('RestoreAny:Vendor');
     }
 
-    public function replicate(AuthUser $authUser, Vendor $vendor): bool
+    public function replicate(User $authUser, Vendor $vendor): bool
     {
-        return $authUser->can('Replicate:Vendor');
+        return $authUser->can('Replicate:Vendor')
+            && $this->canAccessVendor($authUser, $vendor);
     }
 
-    public function reorder(AuthUser $authUser): bool
+    public function reorder(User $authUser): bool
     {
-        return $authUser->can('Reorder:Vendor');
+        return $authUser->isAdmin()
+            && $authUser->can('Reorder:Vendor');
     }
 
+    private function canAccessVendor(User $authUser, Vendor $vendor): bool
+    {
+        if ($authUser->isVendor()) {
+            return (int) $vendor->user_id === (int) $authUser->id;
+        }
+
+        if ($authUser->isAgency()) {
+            $agency = $authUser->agency;
+
+            if (! $agency) {
+                return false;
+            }
+
+            if ((int) $vendor->owning_agency_id === (int) $agency->getKey()) {
+                return true;
+            }
+
+            return $agency->vendors()->whereKey($vendor->getKey())->exists();
+        }
+
+        return $authUser->isAdmin();
+    }
 }

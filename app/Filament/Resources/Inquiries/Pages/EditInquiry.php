@@ -7,6 +7,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditInquiry extends EditRecord
 {
@@ -19,5 +20,17 @@ class EditInquiry extends EditRecord
             ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $user = Auth::user();
+
+        if ($user && $user->isAgency()) {
+            $data['agency_id'] = $this->record->agency_id
+                ?? optional($user->agency)->getKey();
+        }
+
+        return $data;
     }
 }

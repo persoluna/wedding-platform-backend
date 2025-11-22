@@ -4,67 +4,101 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Agency;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AgencyPolicy
 {
     use HandlesAuthorization;
-    
-    public function viewAny(AuthUser $authUser): bool
+
+    public function before(User $authUser): ?bool
     {
+        if ($authUser->hasRole('super_admin')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    public function viewAny(User $authUser): bool
+    {
+        if (! $authUser->isAdmin() && ! $authUser->isAgency()) {
+            return false;
+        }
+
         return $authUser->can('ViewAny:Agency');
     }
 
-    public function view(AuthUser $authUser, Agency $agency): bool
+    public function view(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('View:Agency');
+        return $authUser->can('View:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function create(AuthUser $authUser): bool
+    public function create(User $authUser): bool
     {
+        if (! $authUser->isAdmin() && ! $authUser->isAgency()) {
+            return false;
+        }
+
         return $authUser->can('Create:Agency');
     }
 
-    public function update(AuthUser $authUser, Agency $agency): bool
+    public function update(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('Update:Agency');
+        return $authUser->can('Update:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function delete(AuthUser $authUser, Agency $agency): bool
+    public function delete(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('Delete:Agency');
+        return $authUser->can('Delete:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function restore(AuthUser $authUser, Agency $agency): bool
+    public function restore(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('Restore:Agency');
+        return $authUser->can('Restore:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function forceDelete(AuthUser $authUser, Agency $agency): bool
+    public function forceDelete(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('ForceDelete:Agency');
+        return $authUser->can('ForceDelete:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function forceDeleteAny(AuthUser $authUser): bool
+    public function forceDeleteAny(User $authUser): bool
     {
-        return $authUser->can('ForceDeleteAny:Agency');
+        return $authUser->isAdmin()
+            && $authUser->can('ForceDeleteAny:Agency');
     }
 
-    public function restoreAny(AuthUser $authUser): bool
+    public function restoreAny(User $authUser): bool
     {
-        return $authUser->can('RestoreAny:Agency');
+        return $authUser->isAdmin()
+            && $authUser->can('RestoreAny:Agency');
     }
 
-    public function replicate(AuthUser $authUser, Agency $agency): bool
+    public function replicate(User $authUser, Agency $agency): bool
     {
-        return $authUser->can('Replicate:Agency');
+        return $authUser->can('Replicate:Agency')
+            && $this->canAccessAgency($authUser, $agency);
     }
 
-    public function reorder(AuthUser $authUser): bool
+    public function reorder(User $authUser): bool
     {
-        return $authUser->can('Reorder:Agency');
+        return $authUser->isAdmin()
+            && $authUser->can('Reorder:Agency');
     }
 
+    private function canAccessAgency(User $authUser, Agency $agency): bool
+    {
+        if ($authUser->isAgency()) {
+            return (int) $agency->user_id === (int) $authUser->id;
+        }
+
+        return true;
+    }
 }

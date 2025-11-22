@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Vendors\Schemas;
 use App\Models\Category;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -14,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class VendorForm
@@ -76,6 +78,23 @@ class VendorForm
                         TextInput::make('slug')
                             ->required()
                             ->readOnly(),
+                        Select::make('owning_agency_id')
+                            ->relationship('owningAgency', 'business_name')
+                            ->searchable()
+                            ->preload()
+                            ->default(function (): ?int {
+                                $user = Auth::user();
+
+                                if (! $user || ! $user->isAgency()) {
+                                    return null;
+                                }
+
+                                return optional($user->agency)->getKey();
+                            })
+                            ->disabled(fn () => Auth::user()?->isAgency())
+                            ->required(),
+                        Hidden::make('created_by_user_id')
+                            ->default(fn (): ?int => Auth::id()),
                     ]),
                 RichEditor::make('description')
                     ->columnSpanFull(),

@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class InquiryResource extends Resource
 {
@@ -50,11 +51,38 @@ class InquiryResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query->whereKey(-1);
+        }
+
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        if ($user->isAgency()) {
+            $agencyId = optional($user->agency)->getKey();
+
+            if (! $agencyId) {
+                return $query->whereKey(-1);
+            }
+
+            return $query->where('inquiries.agency_id', $agencyId);
+        }
+
+        return $query->whereKey(-1);
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
     }
 }

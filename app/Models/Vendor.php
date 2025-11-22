@@ -18,7 +18,9 @@ class Vendor extends Model implements HasMedia
 
     protected $fillable = [
         'user_id',
-        'category_id',
+    'category_id',
+    'created_by_user_id',
+    'owning_agency_id',
         'business_name',
         'slug',
         'description',
@@ -80,6 +82,16 @@ class Vendor extends Model implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function owningAgency(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class, 'owning_agency_id');
     }
 
     public function category(): BelongsTo
