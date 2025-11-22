@@ -78,6 +78,16 @@ class InquiryResource extends Resource
             return $query->where('inquiries.agency_id', $agencyId);
         }
 
+        if ($user->isVendor()) {
+            $vendorId = optional($user->vendor)->getKey();
+
+            if (! $vendorId) {
+                return $query->whereKey(-1);
+            }
+
+            return $query->where('inquiries.vendor_id', $vendorId);
+        }
+
         return $query->whereKey(-1);
     }
 

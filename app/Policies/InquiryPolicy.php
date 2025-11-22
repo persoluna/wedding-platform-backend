@@ -23,7 +23,7 @@ class InquiryPolicy
 
     public function viewAny(User $authUser): bool
     {
-        if (! $authUser->isAdmin() && ! $authUser->isAgency()) {
+        if (! $authUser->isAdmin() && ! $authUser->isAgency() && ! $authUser->isVendor()) {
             return false;
         }
 
@@ -103,6 +103,16 @@ class InquiryPolicy
             }
 
             return (int) $inquiry->agency_id === (int) $agency->getKey();
+        }
+
+        if ($authUser->isVendor()) {
+            $vendor = $authUser->vendor;
+
+            if (! $vendor) {
+                return false;
+            }
+
+            return (int) $inquiry->vendor_id === (int) $vendor->getKey();
         }
 
         return $authUser->isAdmin();
