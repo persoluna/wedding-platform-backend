@@ -2,7 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Resources\Agencies\AgencyResource;
+use App\Filament\Agency\Pages\AgencyDashboard;
+use App\Filament\Agency\Pages\EditAgencyProfile;
 use App\Filament\Resources\Inquiries\InquiryResource;
 use App\Filament\Resources\Vendors\VendorResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -32,10 +33,15 @@ class AgencyPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->resources([
-                AgencyResource::class,
                 VendorResource::class,
                 InquiryResource::class,
             ])
+            ->discoverWidgets(in: app_path('Filament/Agency/Widgets'), for: 'App\\Filament\\Agency\\Widgets')
+            ->pages([
+                AgencyDashboard::class,
+                EditAgencyProfile::class,
+            ])
+            ->homeUrl(fn () => AgencyDashboard::getUrl())
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
