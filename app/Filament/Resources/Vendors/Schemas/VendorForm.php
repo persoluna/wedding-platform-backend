@@ -37,12 +37,17 @@ class VendorForm
                             ->preload()
                             ->required(fn () => Auth::user()?->isAdmin())
                             ->visible(fn () => Auth::user()?->isAdmin())
-                            ->rule(fn () => function (string $attribute, $value, Closure $fail): void {
+                            ->rule(fn (?Vendor $record) => function (string $attribute, $value, Closure $fail) use ($record): void {
                                 if (! $value || ! Auth::user()?->isAdmin()) {
                                     return;
                                 }
 
-                                if (Vendor::withTrashed()->where('user_id', $value)->exists()) {
+                                $exists = Vendor::withTrashed()
+                                    ->where('user_id', $value)
+                                    ->when($record, fn ($query) => $query->whereKeyNot($record->getKey()))
+                                    ->exists();
+
+                                if ($exists) {
                                     $fail('This vendor user is already linked to another vendor record.');
                                 }
                             }),
@@ -81,13 +86,16 @@ class VendorForm
                                     ->placeholder('Set a password for the vendor portal')
                                     ->password()
                                     ->same('vendor_password_confirmation')
-                                    ->visible(fn () => Auth::user()?->isAgency())
+                                    ->visible(fn (?Vendor $record) => Auth::user()?->isAgency() && $record === null)
+                                    ->required(fn (?Vendor $record) => Auth::user()?->isAgency() && $record === null)
+                                    ->dehydrated(fn (?Vendor $record) => $record === null)
                                     ->nullable(),
                                 TextInput::make('vendor_password_confirmation')
                                     ->label('Confirm password')
                                     ->password()
                                     ->dehydrated(false)
-                                    ->visible(fn () => Auth::user()?->isAgency())
+                                    ->visible(fn (?Vendor $record) => Auth::user()?->isAgency() && $record === null)
+                                    ->required(fn (?Vendor $record) => Auth::user()?->isAgency() && $record === null)
                                     ->nullable(),
                             ]),
                     ])
@@ -166,9 +174,13 @@ class VendorForm
                         Grid::make(2)
                             ->schema([
                                 FileUpload::make('logo')
-                                    ->image(),
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('vendors/logos'),
                                 FileUpload::make('banner')
-                                    ->image(),
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('vendors/banners'),
                             ]),
                         TextInput::make('website')
                             ->url(),

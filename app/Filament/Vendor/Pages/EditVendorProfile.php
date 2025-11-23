@@ -104,9 +104,13 @@ class EditVendorProfile extends Page implements HasForms
                 Grid::make(2)
                     ->schema([
                         FileUpload::make('logo')
-                            ->image(),
+                            ->image()
+                            ->disk('public')
+                            ->directory('vendors/logos'),
                         FileUpload::make('banner')
-                            ->image(),
+                            ->image()
+                            ->disk('public')
+                            ->directory('vendors/banners'),
                     ]),
                 TextInput::make('website')
                     ->url(),

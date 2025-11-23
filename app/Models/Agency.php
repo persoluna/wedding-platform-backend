@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -163,5 +164,38 @@ class Agency extends Model implements HasMedia
         $this->save();
 
         return $this;
+    }
+
+    protected static function booted(): void
+    {
+        static::deleted(fn (Agency $agency) => $agency->deleteUploads());
+        static::forceDeleted(fn (Agency $agency) => $agency->deleteUploads());
+    }
+
+    protected function deleteUploads(): void
+    {
+        foreach (['logo', 'banner'] as $attribute) {
+            $this->deleteUploadPath($this->{$attribute});
+        }
+    }
+
+    protected function deleteUploadPath(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        collect(['public', config('filesystems.default')])
+            ->filter()
+            ->unique()
+            ->each(function (string $disk) use ($path): void {
+                try {
+                    if (Storage::disk($disk)->exists($path)) {
+                        Storage::disk($disk)->delete($path);
+                    }
+                } catch (\Throwable $exception) {
+                    // Ignore disk misconfiguration and continue
+                }
+            });
     }
 }

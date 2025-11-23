@@ -36,9 +36,13 @@ class AgencyForm
                 RichEditor::make('description')
                     ->columnSpanFull(),
                 FileUpload::make('logo')
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('agencies/logos'),
                 FileUpload::make('banner')
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('agencies/banners'),
                 TextInput::make('website')
                     ->url(),
                 Textarea::make('address')

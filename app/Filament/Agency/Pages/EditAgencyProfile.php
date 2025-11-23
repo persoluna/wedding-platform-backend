@@ -101,9 +101,13 @@ class EditAgencyProfile extends Page implements HasForms
 				Grid::make(2)
 					->schema([
 						FileUpload::make('logo')
-							->image(),
+							->image()
+							->disk('public')
+							->directory('agencies/logos'),
 						FileUpload::make('banner')
-							->image(),
+							->image()
+							->disk('public')
+							->directory('agencies/banners'),
 					]),
 				TextInput::make('website')
 					->url(),
