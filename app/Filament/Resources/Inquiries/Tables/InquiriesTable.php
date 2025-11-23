@@ -3,9 +3,12 @@
 namespace App\Filament\Resources\Inquiries\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -14,6 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class InquiriesTable
 {
@@ -71,6 +75,10 @@ class InquiriesTable
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -88,6 +96,12 @@ class InquiriesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()?->isAdmin() && ! $record->trashed()),
+                RestoreAction::make()
+                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                ForceDeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
