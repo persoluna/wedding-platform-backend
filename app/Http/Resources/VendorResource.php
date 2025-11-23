@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/** @mixin \App\Models\Vendor */
+class VendorResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'business_name' => $this->business_name,
+            'description' => $this->description,
+            'category' => $this->whenLoaded('category', function () {
+                return [
+                    'id' => $this->category?->id,
+                    'name' => $this->category?->name,
+                ];
+            }),
+            'pricing' => [
+                'min_price' => $this->min_price,
+                'max_price' => $this->max_price,
+                'price_unit' => $this->price_unit,
+            ],
+            'location' => [
+                'address' => $this->address,
+                'city' => $this->city,
+                'state' => $this->state,
+                'postal_code' => $this->postal_code,
+                'country' => $this->country,
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
+            ],
+            'contact' => [
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'website' => $this->website,
+                'whatsapp' => $this->whatsapp,
+            ],
+            'social' => [
+                'facebook' => $this->facebook,
+                'instagram' => $this->instagram,
+                'twitter' => $this->twitter,
+                'linkedin' => $this->linkedin,
+                'youtube' => $this->youtube,
+            ],
+            'stats' => [
+                'avg_rating' => $this->avg_rating,
+                'review_count' => $this->review_count,
+                'views_count' => $this->views_count,
+                'verified' => (bool) $this->verified,
+                'featured' => (bool) $this->featured,
+                'premium' => (bool) $this->premium,
+            ],
+            'media' => [
+                'logo' => $this->getFirstMediaUrl('logo') ?: null,
+                'banner' => $this->getFirstMediaUrl('banner') ?: null,
+                'gallery' => $this->getMedia('gallery')->map(fn ($media) => $media->getFullUrl()),
+            ],
+            'services' => $this->whenLoaded('services', fn () => $this->services->map(fn ($service) => [
+                'id' => $service->id,
+                'name' => $service->name,
+                'price' => $service->price,
+                'description' => $service->description,
+            ])),
+            'tags' => $this->whenLoaded('tags', fn () => $this->tags->pluck('name')),
+            'created_at' => optional($this->created_at)->toIso8601String(),
+            'updated_at' => optional($this->updated_at)->toIso8601String(),
+        ];
+    }
+}

@@ -1,61 +1,272 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Wedding Platform Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 + Filament 4 backend that powers a curated wedding marketplace. The system lets administrators, agencies, and vendors collaborate on inquiries, bookings, and marketing assets while exposing a clean read-only API for the public website.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 1. Mission & Scope
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Goal | Description |
+| --- | --- |
+| Centralize supply | Capture all agencies, vendors, services, and media in one authoritative database with soft-delete safety rails. |
+| Empower operations | Provide Filament panels tailored for admins, agencies, and vendors, so each role can act on inquiries, availability, and promotions. |
+| Feed the frontend | Deliver fast, filterable JSON endpoints for agencies and vendors so the marketing site can showcase live data. |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 2. Architecture Snapshot
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Layer | Implementation | Reasoning |
+| --- | --- | --- |
+| Framework | Laravel 12 (PHP 8.3) | Modern routing, queues, Eloquent ORM, first-class Sail support. |
+| Admin UI | Filament 4 multi-panel (`/admin`, `/agency`, `/vendor`) with Filament Shield | Accelerates CRUD, enforces role-aware permissions, gives widgets/dashboards out of the box. |
+| Domain layer | `app/Domain/*` namespaces plus Eloquent models in `app/Models` | Keeps business logic close to domain language while still leveraging Eloquent relations. |
+| Database | PostgreSQL via Sail | Reliable relational storage with JSON support for flexible attributes. |
+| Media | Spatie Laravel Media Library (`media` table) | Unified handling for logos, banners, galleries; enforces single-file/logo collections. |
+| APIs | Versioned read-only endpoints under `routes/api.php` (currently `v1`) | Decouples public site needs from Filament; makes it easy to evolve versions later. |
+| Auth | Panel auth today; Sanctum-ready for future API auth | Keeps options open for token-based access without over-engineering now. |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 3. Feature Map
 
-## Laravel Sponsors
+| Area | Highlights | Key Files |
+| --- | --- | --- |
+| Users & Roles | Soft-deletable users with dependency-aware deletion, role assignments, login tracking. | `app/Models/User.php`, `app/Filament/Resources/Users/Tables/UsersTable.php` |
+| Agencies | Rich profile fields, media attachments, vendor relationships, rating metrics. | `app/Models/Agency.php`, `app/Filament/Resources/Agencies/*` |
+| Vendors | Category + pricing info, services, availability calendar, agency partnerships. | `app/Models/Vendor.php`, `app/Filament/Resources/Vendors/*` |
+| Clients & Inquiries | Inquiry lifecycle (new → responded → booked), urgency flags, follow-up tracking, messaging. | `app/Models/Client.php`, `app/Models/Inquiry.php`, `app/Filament/Resources/Inquiries/*` |
+| Matching & Bookings | Morph relationships for packages, bookings, reviews, FAQs that attach to agencies or vendors. | `app/Models/Booking.php`, `app/Models/Package.php`, etc. |
+| Media | `media` migration + collections for logo/banner/gallery/documents enforce consistent storage. | `database/migrations/2025_11_23_000001_create_media_table.php` |
+| Public API | Read-only endpoints for agencies/vendors with filtering, sorting, pagination, media URLs. | `routes/api.php`, `app/Http/Controllers/Api/V1/*`, `app/Http/Resources/*` |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 4. Domain Logic Highlights
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4.1 Users & Roles
+- Users cover admins, agencies, vendors, and clients; role logic flows through Filament resources and policies.
+- Soft deletes are enforced everywhere, with guardrails in `UsersTable` that hide delete buttons when dependencies exist and deliver persistent warnings before force deletes.
+- Spatie Media Library allows avatars/documents to attach just like vendor logos.
 
-## Contributing
+### 4.2 Agencies
+- Attributes (business name, slug, location, contact, specialties, years in business) live in `app/Models/Agency`.
+- Relationships: vendors (approved/pending/rejected), inquiries, portfolio images, packages, reviews, FAQs, bookings, tags.
+- Helpers such as `incrementViewsCount()` and `updateRatingStats()` keep dashboard metrics accurate.
+- Filament resources provide search, Trashed filters, toggled columns, and scoped delete/restore/force actions.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4.3 Vendors
+- Vendors include pricing ranges (`min_price`, `max_price`, `price_unit`), service areas, social links, arbitrary JSON `attributes`.
+- Connected to categories, owning agencies, services, event types, tags, availability slots.
+- Availability helper `isAvailableOn()` lets the frontend build calendars without duplicating logic.
+- Media collections mirror agencies for consistent UX.
 
-## Code of Conduct
+### 4.4 Clients & Inquiries
+- Inquiries capture event metadata, budget, urgency, multiple note channels, and timestamps for response/follow-up/closure.
+- Convenience methods (`markAsResponded`, `recordFollowUp`, `close`) prevent inconsistent status transitions.
+- Messages, bookings, vendors, and agencies all relate back to each inquiry for auditing.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4.5 Matching, Services, Packages
+- Services, packages, reviews, FAQs, and bookings rely on morph relationships so they can belong to either agencies or vendors.
+- Tags offer cross-cutting categorization ("Luxury", "Destination", etc.).
+- These abstractions keep the schema DRY yet flexible for future asset types.
 
-## Security Vulnerabilities
+### 4.6 Media Handling
+- `registerMediaCollections()` defines single-file vs. multi-file collections per model.
+- API resources expose `logo`, `banner`, `gallery` URLs via Spatie helpers.
+- The `media` table migration mirrors the official schema so conversions/responsive images can be enabled later without changes.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 5. Admin & Partner Panels (Filament)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Panel | Path | Purpose | Notable Logic |
+| --- | --- | --- | --- |
+| Admin | `/admin` | Full CRUD across users, agencies, vendors, clients, inquiries, bookings. | Filament Shield permissions, soft-delete filters, dependency-aware deletes, dashboard widgets. |
+| Agency | `/agency` | Agency staff manage their vendors, respond to inquiries, maintain portfolios. | Custom `AgencyPanelProvider` scopes resources and branding. |
+| Vendor | `/vendor` | Vendors update profiles, services, availability, respond to leads. | Mirrors agency panel with vendor-specific navigation/resources. |
+
+Why Filament?
+- Rapid scaffolding with consistent UI components (tables, forms, infolists, dashboards).
+- Built-in filters (search, column toggles, trashed) reduce bespoke UI work.
+- Widgets put KPIs (e.g., inquiries per week) directly on panel dashboards.
+
+Safety nets:
+- Delete/force-delete actions only appear when the record lacks blocking dependencies (e.g., users tied to vendors/agencies).
+- Confirmation copy explains consequences plainly and requires explicit admin confirmation.
+
+---
+
+## 6. Public API (v1)
+
+Base URL: `https://your-domain.test/api/v1`
+
+| Resource | Endpoint | Description |
+| --- | --- | --- |
+| Agencies | `GET /agencies` | Paginated list with filters (search, city, country, state, verified, featured, premium). |
+| Agencies | `GET /agencies/{slug}` | Single agency by slug; increments view count unless `track_views=false`. |
+| Vendors | `GET /vendors` | Paginated list; supports category + price filters, availability date, boolean flags. |
+| Vendors | `GET /vendors/{slug}` | Single vendor by slug; returns category, services, tags, media, stats. |
+
+### Query Parameters
+
+| Parameter | Applies to | Notes |
+| --- | --- | --- |
+| `search` | Both | Fuzzy search across business name, description, city, country. |
+| `city`, `state`, `country` | Both | Partial match filters for geo searches. |
+| `verified`, `featured`, `premium` | Both | Accepts `true`/`false`; parsed into booleans. |
+| `category_id` | Vendors | Exact match on the vendor's primary category. |
+| `min_price`, `max_price` | Vendors | Numeric filters on price range columns. |
+| `available_on` | Vendors | `Y-m-d`; ensures availability shows `available`/`partially_booked`. |
+| `sort` | Both | Prefix with `-` for descending. Agencies: `created_at`, `avg_rating`, `review_count`, `views_count`. Vendors add `min_price`, `max_price`. |
+| `page`, `per_page` | Both | Pagination (`per_page` capped at 50). |
+| `track_views` | Detail endpoints | `false` skips the automatic view counter increment. |
+
+### Example Requests
+
+```http
+GET /api/v1/agencies?city=Toronto&verified=true&sort=-avg_rating
+Accept: application/json
+```
+
+```json
+{
+	"data": [
+		{
+			"id": 1,
+			"slug": "evergreen-events",
+			"business_name": "Evergreen Events",
+			"description": "Full-service planning studio...",
+			"location": {
+				"city": "Toronto",
+				"country": "Canada"
+			},
+			"stats": {
+				"avg_rating": 4.9,
+				"review_count": 37,
+				"verified": true,
+				"featured": true,
+				"views_count": 1284
+			},
+			"media": {
+				"logo": "https://cdn.test/storage/.../logo.jpg",
+				"banner": "https://cdn.test/storage/.../banner.jpg",
+				"gallery": ["https://cdn.test/storage/.../gallery/1.jpg"]
+			}
+		}
+	],
+	"links": {
+		"first": "https://your-domain.test/api/v1/agencies?page=1"
+	},
+	"meta": {
+		"current_page": 1,
+		"per_page": 15,
+		"total": 1
+	}
+}
+```
+
+```http
+GET /api/v1/vendors/floral-boutique?track_views=false
+Accept: application/json
+```
+
+```json
+{
+	"data": {
+		"id": 5,
+		"slug": "floral-boutique",
+		"business_name": "The Floral Boutique",
+		"category": {
+			"id": 2,
+			"name": "Florist"
+		},
+		"pricing": {
+			"min_price": 500,
+			"max_price": 3000,
+			"price_unit": "event"
+		},
+		"location": {
+			"city": "Vancouver",
+			"country": "Canada"
+		},
+		"services": [
+			{"id": 11, "name": "Bouquet design", "price": 250}
+		],
+		"media": {
+			"logo": "https://cdn.test/.../logo.png",
+			"gallery": ["https://cdn.test/.../1.png"]
+		},
+		"stats": {
+			"avg_rating": 4.8,
+			"review_count": 22,
+			"views_count": 194,
+			"verified": true
+		}
+	}
+}
+```
+
+### Response Shape & Rate Limiting
+- Lists return Laravel pagination payloads (`data`, `links`, `meta`).
+- Resources expose nested dictionaries (`location`, `contact`, `social`, `stats`, `media`) so the frontend can read structured data without extra transforms.
+- When relationships are eager loaded (`tags`, `services`), the resources automatically append them.
+- All API routes share `throttle:120,1`, limiting each IP to 120 requests/minute. Adjust in `routes/api.php` if traffic requires more headroom.
+
+---
+
+## 7. Data & Media Storage
+- **Database:** PostgreSQL via Sail. Run `./vendor/bin/sail artisan migrate --seed` to bootstrap data.
+- **Media:** Stored via Spatie Media Library under `storage/app/public`, exposed via `public/storage`. Collections include `logo`, `banner`, `gallery`, `portfolio`, `documents`.
+- **Caching:** Not enabled yet, but architecture leaves room for query/response caching when the frontend traffic grows.
+
+---
+
+## 8. Local Development
+
+```bash
+cp .env.example .env
+./vendor/bin/sail up -d
+./vendor/bin/sail composer install
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+```
+
+Helpful commands:
+- `./vendor/bin/sail artisan make:filament-resource Vendor` – scaffold additional resources.
+- `./vendor/bin/sail artisan migrate:fresh --seed` – reset the DB while iterating quickly.
+- `./vendor/bin/sail artisan storage:link` – expose media assets.
+
+---
+
+## 9. Testing & Quality Gates
+
+| Check | Command |
+| --- | --- |
+| PHPUnit tests | `./vendor/bin/sail artisan test` |
+| Pint / code style | `./vendor/bin/sail pint` |
+| PHPStan (if enabled) | `./vendor/bin/sail vendor/bin/phpstan analyse` |
+| Static analysis / IDE helpers | `./vendor/bin/sail artisan ide-helper:generate` |
+
+Aim to keep builds green before merging; run relevant tests whenever you touch domain logic or Filament resources.
+
+---
+
+## 10. Deployment & Environment Notes
+- Configure DB (`DB_*`), queue (`QUEUE_CONNECTION`), mail (`MAIL_*`), storage (`FILESYSTEM_DISK=public`) in `.env` across environments.
+- Always run `./vendor/bin/sail artisan storage:link` after provisioning so media URLs work.
+- Queues: inquiries, notifications, and media conversions can move to queues—set `QUEUE_CONNECTION=database` by default.
+- Monitoring: Laravel `/up` health route is enabled for uptime checks.
+
+---
+
+## 11. Roadmap / Next Steps
+1. **Expand public API** – expose clients, inquiries (read-only), availability calendar endpoints, search suggestions.
+2. **Authenticated API** – issue Sanctum tokens so agencies/vendors can use the same endpoints outside Filament.
+3. **Caching & performance** – add response caching + ETags once marketing traffic scales.
+4. **Analytics** – stream view counts/events to a warehouse or queue for deeper dashboards.
+5. **Automations** – schedule follow-up reminders for inquiries that stay unanswered for N days.
+
+---
+
+Built with ❤️ by the Wedding Platform team. Contributions welcome—open an issue or PR with context about the panel or API you’re touching so we can review quickly.
