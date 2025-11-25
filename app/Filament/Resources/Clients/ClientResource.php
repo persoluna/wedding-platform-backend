@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,5 +91,35 @@ class ClientResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'user.name',
+            'user.email',
+            'partner_name',
+            'phone',
+            'wedding_city',
+            'wedding_venue',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var Client $record */
+        return array_filter([
+            'Email' => $record->user?->email,
+            'Phone' => $record->phone,
+            'Wedding' => collect([
+                $record->wedding_city,
+                $record->wedding_venue,
+            ])->filter()->implode(' • '),
+        ]);
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with('user');
     }
 }

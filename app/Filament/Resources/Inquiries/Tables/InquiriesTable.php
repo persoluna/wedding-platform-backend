@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inquiries\Tables;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -13,6 +14,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -26,9 +28,11 @@ class InquiriesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Client name')
+                    ->label('Client')
+                    ->description(fn ($record) => collect([$record->email, $record->phone])->filter()->join(' • '))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 TextColumn::make('agency.business_name')
                     ->label('Agency')
                     ->toggleable()
@@ -38,13 +42,6 @@ class InquiriesTable
                     ->label('Vendor')
                     ->toggleable()
                     ->sortable()
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
-                TextColumn::make('phone')
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('event_date')
                     ->date()
@@ -95,13 +92,19 @@ class InquiriesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && ! $record->trashed()),
-                RestoreAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
-                ForceDeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && ! $record->trashed()),
+                    RestoreAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                    ForceDeleteAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                ])
+                    ->label('Actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->color('gray')
+                    ->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -109,6 +112,7 @@ class InquiriesTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->recordActionsPosition(RecordActionsPosition::AfterColumns);
     }
 }

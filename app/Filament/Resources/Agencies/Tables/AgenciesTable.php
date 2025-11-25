@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Agencies\Tables;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -11,8 +12,10 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -23,97 +26,90 @@ class AgenciesTable
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->searchable(),
                 TextColumn::make('business_name')
-                    ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                TextColumn::make('logo')
-                    ->searchable(),
-                TextColumn::make('banner')
-                    ->searchable(),
-                TextColumn::make('website')
-                    ->searchable(),
-                TextColumn::make('city')
-                    ->searchable(),
-                TextColumn::make('state')
-                    ->searchable(),
-                TextColumn::make('postal_code')
-                    ->searchable(),
-                TextColumn::make('country')
-                    ->searchable(),
-                TextColumn::make('latitude')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('longitude')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Agency')
+                    ->weight('medium')
+                    ->description(fn ($record) => $record->website)
+                    ->searchable()
+                    ->sortable()
+                    ->wrap(),
+                TextColumn::make('user.name')
+                    ->label('Owner')
+                    ->badge()
+                    ->color('primary')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('location')
+                    ->label('Location')
+                    ->state(fn ($record) => collect([$record->city, $record->state])->filter()->join(', '))
+                    ->icon('heroicon-o-map-pin')
+                    ->wrap(),
                 TextColumn::make('phone')
+                    ->label('Phone')
+                    ->icon('heroicon-o-phone')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('whatsapp')
+                    ->label('Email')
+                    ->copyable()
+                    ->copyMessage('Email copied')
+                    ->copyMessageDuration(1500)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('avg_rating')
-                    ->numeric()
+                    ->label('Rating')
+                    ->formatStateUsing(fn ($state) => filled($state) ? number_format($state, 1) : '—')
+                    ->suffix(' / 5')
                     ->sortable(),
-                TextColumn::make('review_count')
+                TextColumn::make('views_count')
+                    ->label('Views')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('facebook')
-                    ->searchable(),
-                TextColumn::make('instagram')
-                    ->searchable(),
-                TextColumn::make('twitter')
-                    ->searchable(),
-                TextColumn::make('linkedin')
-                    ->searchable(),
-                TextColumn::make('youtube')
-                    ->searchable(),
-                TextColumn::make('years_in_business')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                BadgeColumn::make('subscription_status')
+                    ->label('Subscription')
+                    ->colors([
+                        'success' => 'active',
+                        'warning' => 'expiring',
+                        'danger' => 'expired',
+                        'gray' => null,
+                    ])
+                    ->icons([
+                        'heroicon-o-bolt' => 'active',
+                        'heroicon-o-clock' => 'expiring',
+                        'heroicon-o-x-circle' => 'expired',
+                    ])
+                    ->placeholder('—'),
+                TextColumn::make('subscription_expires_at')
+                    ->label('Renews')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('verified')
-                    ->boolean(),
-                IconColumn::make('featured')
+                    ->label('Verified')
                     ->boolean(),
                 IconColumn::make('premium')
+                    ->label('Premium')
                     ->boolean(),
-                TextColumn::make('views_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('subscription_status')
-                    ->searchable(),
-                TextColumn::make('subscription_expires_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && ! $record->trashed()),
-                RestoreAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
-                ForceDeleteAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && ! $record->trashed()),
+                    RestoreAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                    ForceDeleteAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                ])
+                    ->label('Actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->color('gray')
+                    ->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -121,6 +117,7 @@ class AgenciesTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->recordActionsPosition(RecordActionsPosition::AfterColumns);
     }
 }

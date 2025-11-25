@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Tables;
 
 use App\Models\User;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -13,8 +14,10 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -26,62 +29,72 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->label('User')
+                    ->description(fn ($record) => $record->email)
+                    ->searchable()
+                    ->wrap(),
                 TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
                     ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('type')
+                BadgeColumn::make('type')
+                    ->label('Type')
+                    ->colors([
+                        'primary' => ['admin', 'agency'],
+                        'success' => ['vendor', 'client'],
+                        'gray' => null,
+                    ])
                     ->searchable(),
                 TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('avatar')
+                    ->label('Phone')
+                    ->icon('heroicon-o-phone')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 IconColumn::make('active')
+                    ->label('Active')
                     ->boolean(),
-                TextColumn::make('deleted_at')
+                TextColumn::make('email_verified_at')
+                    ->label('Verified at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('google_id')
-                    ->searchable(),
-                TextColumn::make('login_type')
-                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make()
-                    ->visible(fn (User $record) => Auth::user()?->isAdmin()
-                        && ! $record->trashed()
-                        && ! UsersTable::hasBlockingDependencies($record))
-                    ->requiresConfirmation()
-                    ->modalDescription(fn (User $record) => UsersTable::getDeleteModalDescription($record))
-                    ->before(fn (DeleteAction $action, User $record) => UsersTable::abortIfLinked($action, $record)),
-                RestoreAction::make()
-                    ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
-                ForceDeleteAction::make()
-                    ->visible(fn (User $record) => Auth::user()?->isAdmin()
-                        && $record->trashed()
-                        && ! UsersTable::hasBlockingDependencies($record))
-                    ->requiresConfirmation()
-                    ->modalDescription(fn (User $record) => UsersTable::getForceDeleteModalDescription($record))
-                    ->before(fn (ForceDeleteAction $action, User $record) => UsersTable::abortIfLinked($action, $record)),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->visible(fn (User $record) => Auth::user()?->isAdmin()
+                            && ! $record->trashed()
+                            && ! UsersTable::hasBlockingDependencies($record))
+                        ->requiresConfirmation()
+                        ->modalDescription(fn (User $record) => UsersTable::getDeleteModalDescription($record))
+                        ->before(fn (DeleteAction $action, User $record) => UsersTable::abortIfLinked($action, $record)),
+                    RestoreAction::make()
+                        ->visible(fn ($record) => Auth::user()?->isAdmin() && $record->trashed()),
+                    ForceDeleteAction::make()
+                        ->visible(fn (User $record) => Auth::user()?->isAdmin()
+                            && $record->trashed()
+                            && ! UsersTable::hasBlockingDependencies($record))
+                        ->requiresConfirmation()
+                        ->modalDescription(fn (User $record) => UsersTable::getForceDeleteModalDescription($record))
+                        ->before(fn (ForceDeleteAction $action, User $record) => UsersTable::abortIfLinked($action, $record)),
+                ])
+                    ->label('Actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->color('gray')
+                    ->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -89,7 +102,8 @@ class UsersTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+        ])
+        ->recordActionsPosition(RecordActionsPosition::AfterColumns);
     }
 
     protected static function abortIfLinked(DeleteAction|ForceDeleteAction $action, User $record): void

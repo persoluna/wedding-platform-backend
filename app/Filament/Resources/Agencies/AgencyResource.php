@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,5 +91,36 @@ class AgencyResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'business_name',
+            'user.name',
+            'user.email',
+            'phone',
+            'city',
+            'state',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var Agency $record */
+        return array_filter([
+            'Email' => $record->user?->email ?? $record->email,
+            'Phone' => $record->phone,
+            'Location' => collect([
+                $record->city,
+                $record->state,
+                $record->country,
+            ])->filter()->implode(', '),
+        ]);
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with('user');
     }
 }

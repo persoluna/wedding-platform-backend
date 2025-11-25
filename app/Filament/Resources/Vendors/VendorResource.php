@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
@@ -112,5 +113,40 @@ class VendorResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'business_name',
+            'user.name',
+            'user.email',
+            'category.name',
+            'phone',
+            'city',
+            'state',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var Vendor $record */
+        return array_filter([
+            'Category' => $record->category?->name,
+            'Email' => $record->user?->email ?? $record->email,
+            'Phone' => $record->phone,
+            'Location' => collect([
+                $record->city,
+                $record->state,
+            ])->filter()->implode(', '),
+        ]);
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with([
+            'user',
+            'category',
+        ]);
     }
 }

@@ -14,8 +14,10 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class InquiryResource extends Resource
 {
@@ -27,7 +29,7 @@ class InquiryResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $recordTitleAttribute = 'Inquiry';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {
@@ -98,5 +100,38 @@ class InquiryResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'email',
+            'phone',
+            'client.user.name',
+            'agency.business_name',
+            'vendor.business_name',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var Inquiry $record */
+        return array_filter([
+            'Email' => $record->email,
+            'Status' => $record->status ? Str::headline($record->status) : null,
+            'Client' => $record->client?->user?->name,
+            'Agency' => $record->agency?->business_name,
+            'Vendor' => $record->vendor?->business_name,
+        ]);
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with([
+            'client.user',
+            'agency',
+            'vendor',
+        ]);
     }
 }
