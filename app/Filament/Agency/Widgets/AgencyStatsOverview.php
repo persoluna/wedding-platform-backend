@@ -2,7 +2,6 @@
 
 namespace App\Filament\Agency\Widgets;
 
-use App\Models\Inquiry;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;

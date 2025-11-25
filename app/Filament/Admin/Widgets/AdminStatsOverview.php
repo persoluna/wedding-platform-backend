@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AdminStatsOverview extends StatsOverviewWidget
 {
-    protected ?string $heading = 'Snapshot';
+    protected ?string $heading = null;
 
     public ?string $filter = '30_days';
 
@@ -103,9 +103,9 @@ class AdminStatsOverview extends StatsOverviewWidget
     {
         $end = Carbon::now();
 
-    $filter = $this->filter ?? '30_days';
+        $filter = $this->filter ?? '30_days';
 
-    return match ($filter) {
+        return match ($filter) {
             '7_days' => [$end->copy()->subDays(6)->startOfDay(), $end],
             '90_days' => [$end->copy()->subDays(89)->startOfDay(), $end],
             '365_days' => [$end->copy()->subDays(364)->startOfDay(), $end],
@@ -118,8 +118,8 @@ class AdminStatsOverview extends StatsOverviewWidget
     {
         return Stat::make($label, number_format($value))
             ->description(match ($this->filter ?? '30_days') {
-                'all' => 'Total to date: ' . number_format($total),
-                default => 'All-time: ' . number_format($total),
+                'all' => 'Total to date: '.number_format($total),
+                default => 'All-time: '.number_format($total),
             })
             ->icon($icon)
             ->color($color ?? 'primary')
@@ -140,7 +140,7 @@ class AdminStatsOverview extends StatsOverviewWidget
         $chartStart = $start?->copy() ?? $end->copy()->subDays(9)->startOfDay();
 
         $data = (clone $query)
-            ->selectRaw('DATE(' . $dateColumn . ') as day, COUNT(*) as aggregate')
+            ->selectRaw('DATE('.$dateColumn.') as day, COUNT(*) as aggregate')
             ->whereNotNull($dateColumn)
             ->whereBetween($dateColumn, [$chartStart, $end])
             ->groupBy('day')

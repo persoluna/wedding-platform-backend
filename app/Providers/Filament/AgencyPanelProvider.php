@@ -7,6 +7,7 @@ use App\Filament\Agency\Pages\EditAgencyProfile;
 use App\Filament\Resources\Inquiries\InquiryResource;
 use App\Filament\Resources\Vendors\VendorResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,9 +30,13 @@ class AgencyPanelProvider extends PanelProvider
             ->id('agency')
             ->path('agency')
             ->login()
+            ->font('Plus Jakarta Sans', provider: GoogleFontProvider::class)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Rose,
+                'gray' => Color::Stone,
+                'secondary' => Color::Sky,
             ])
+            ->viteTheme('resources/css/filament/agency/theme.css')
             ->resources([
                 VendorResource::class,
                 InquiryResource::class,

@@ -6,6 +6,7 @@ use App\Filament\Resources\Inquiries\InquiryResource;
 use App\Filament\Vendor\Pages\EditVendorProfile;
 use App\Filament\Vendor\Pages\VendorDashboard;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,9 +29,13 @@ class VendorPanelProvider extends PanelProvider
             ->id('vendor')
             ->path('vendor')
             ->login()
+            ->font('Plus Jakarta Sans', provider: GoogleFontProvider::class)
             ->colors([
                 'primary' => Color::Emerald,
+                'gray' => Color::Zinc,
+                'secondary' => Color::Teal,
             ])
+            ->viteTheme('resources/css/filament/vendor/theme.css')
             ->resources([
                 InquiryResource::class,
             ])

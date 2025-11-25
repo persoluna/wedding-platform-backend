@@ -72,6 +72,7 @@ class VendorForm
 
                                 if ($existing->trashed()) {
                                     $fail('This email belongs to an inactive account. Ask an admin to restore or delete it before reusing.');
+
                                     return;
                                 }
 
@@ -130,7 +131,7 @@ class VendorForm
                                         $suffix = 2;
 
                                         while (Category::where('slug', $slug)->exists()) {
-                                            $slug = $baseSlug . '-' . $suffix;
+                                            $slug = $baseSlug.'-'.$suffix;
                                             $suffix++;
                                         }
 
@@ -263,7 +264,7 @@ class VendorForm
                             ->required()
                             ->default('free'),
                         DateTimePicker::make('subscription_expires_at'),
-                    ])
+                    ]),
             ]);
     }
 }

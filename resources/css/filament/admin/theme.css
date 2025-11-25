@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+/* stylelint-disable at-rule-no-unknown */
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+/* stylelint-enable at-rule-no-unknown */
+
+:root {
+    --admin-heading-font: 'Space Grotesk', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --admin-body-font: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --admin-muted: #5f6677;
+    --admin-card-border: rgba(15, 23, 42, 0.08);
+    --admin-card-bg: rgba(255, 255, 255, 0.9);
+}
+
+:root.dark {
+    --admin-muted: #cbd5f5;
+    --admin-card-border: rgba(148, 163, 184, 0.4);
+    --admin-card-bg: rgba(15, 23, 42, 0.75);
+}
+
+@supports (color: color-mix(in oklab, white, black)) {
+    :root {
+        --admin-muted: color-mix(in oklab, var(--gray-500) 70%, transparent);
+        --admin-card-border: color-mix(in oklab, var(--gray-300) 40%, transparent);
+        --admin-card-bg: color-mix(in oklab, var(--color-white) 92%, transparent);
+    }
+
+    :root.dark {
+        --admin-muted: color-mix(in oklab, var(--gray-300) 90%, transparent);
+        --admin-card-border: color-mix(in oklab, var(--gray-600) 60%, transparent);
+        --admin-card-bg: color-mix(in oklab, var(--gray-900) 80%, transparent);
+    }
+}
+
+.fi-body {
+    font-family: var(--admin-body-font);
+}
+
+.fi-header-heading {
+    font-family: var(--admin-heading-font);
+    font-size: clamp(1.75rem, 2vw + 1.4rem, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--gray-950);
+}
+
+.dark .fi-header-heading {
+    color: var(--color-white);
+}
+
+.fi-header-subheading {
+    margin-top: calc(var(--spacing) * 2);
+    color: #6b7280;
+    color: var(--admin-muted);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+.dark .fi-header-subheading {
+    color: var(--admin-muted);
+}
+
+.fi-page-content > :is(.fi-wi-stats-overview, .fi-wi-stats-overview + *) {
+    scroll-margin-top: calc(var(--spacing) * 10);
+}
+
+.fi-wi-stats-overview {
+    gap: clamp(1rem, 2vw, calc(var(--spacing) * 5));
+}
+
+.fi-wi-stats-overview-stat {
+    padding: calc(var(--spacing) * 4);
+    border-radius: 1.25rem;
+    border: 1px solid var(--admin-card-border);
+    background: var(--admin-card-bg);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.dark .fi-wi-stats-overview-stat {
+    border-color: var(--admin-card-border);
+    background: var(--admin-card-bg);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+}
+
+.fi-wi-stats-overview-stat-label-ctn {
+    align-items: center;
+    column-gap: calc(var(--spacing) * 2);
+}
+
+.fi-wi-stats-overview-stat-label {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.dark .fi-wi-stats-overview-stat-label {
+    color: var(--gray-400);
+}
+
+.fi-wi-stats-overview-stat-value {
+    margin-top: calc(var(--spacing) * 3);
+    font-family: var(--admin-heading-font);
+    font-size: clamp(1.5rem, 4vw, 2.35rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--gray-950);
+}
+
+.dark .fi-wi-stats-overview-stat-value {
+    color: var(--color-white);
+}
+
+.fi-wi-stats-overview-stat-description {
+    margin-top: calc(var(--spacing) * 2);
+    color: #475569;
+    color: var(--admin-muted);
+    font-size: 0.95rem;
+}
+
+.dark .fi-wi-stats-overview-stat-description {
+    color: var(--admin-muted);
+}
+
+.fi-wi-stats-overview-stat-description .fi-icon {
+    color: inherit;
+}
+
+.fi-wi-stats-overview-stat-chart {
+    margin-top: calc(var(--spacing) * 3);
+}
+
+@media (max-width: 768px) {
+    .fi-header-heading {
+        font-size: clamp(1.6rem, 5vw, 2rem);
+    }
+
+    .fi-wi-stats-overview-stat {
+        padding: calc(var(--spacing) * 3);
+    }
+}

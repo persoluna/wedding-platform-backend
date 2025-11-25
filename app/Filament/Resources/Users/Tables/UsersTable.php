@@ -102,8 +102,8 @@ class UsersTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-        ])
-        ->recordActionsPosition(RecordActionsPosition::AfterColumns);
+            ])
+            ->recordActionsPosition(RecordActionsPosition::AfterColumns);
     }
 
     protected static function abortIfLinked(DeleteAction|ForceDeleteAction $action, User $record): void
@@ -156,7 +156,7 @@ class UsersTable
             return null;
         }
 
-        return 'This user is still linked to ' . implode(', ', $links) . '. Please remove or reassign these records before deleting the user.';
+        return 'This user is still linked to '.implode(', ', $links).'. Please remove or reassign these records before deleting the user.';
     }
 
     protected static function hasBlockingDependencies(User $record): bool

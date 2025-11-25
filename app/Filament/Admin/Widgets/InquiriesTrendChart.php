@@ -14,7 +14,7 @@ class InquiriesTrendChart extends BarChartWidget
 
     protected ?string $maxHeight = '220px';
 
-    public ?string $filter = '14_days';
+    public ?string $filter = '7_days';
 
     protected int|string|array $columnSpan = [
         'md' => 1,
