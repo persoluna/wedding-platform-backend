@@ -11,9 +11,9 @@ use App\Filament\Resources\Agencies\Schemas\AgencyInfolist;
 use App\Filament\Resources\Agencies\Tables\AgenciesTable;
 use App\Models\Agency;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,7 +23,11 @@ class AgencyResource extends Resource
 {
     protected static ?string $model = Agency::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Operations';
+
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $recordTitleAttribute = 'business_name';
 
