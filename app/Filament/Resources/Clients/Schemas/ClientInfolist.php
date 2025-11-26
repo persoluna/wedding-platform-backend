@@ -31,7 +31,7 @@ class ClientInfolist
                     ->numeric()
                     ->placeholder('-'),
                 TextEntry::make('budget')
-                    ->numeric()
+                    ->money('INR')
                     ->placeholder('-'),
                 TextEntry::make('wedding_type')
                     ->placeholder('-'),

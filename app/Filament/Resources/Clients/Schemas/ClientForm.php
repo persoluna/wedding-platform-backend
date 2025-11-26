@@ -50,7 +50,8 @@ class ClientForm
                         TextInput::make('budget')
                             ->numeric()
                             ->minValue(0)
-                            ->step(0.01),
+                            ->step(0.01)
+                            ->prefix('₹'),
                         TextInput::make('wedding_type')
                             ->maxLength(255),
                     ]),

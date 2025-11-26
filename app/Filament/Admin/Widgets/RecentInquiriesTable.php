@@ -58,7 +58,7 @@ class RecentInquiriesTable extends BaseWidget
                 ->label('Urgent')
                 ->boolean(),
             Tables\Columns\TextColumn::make('budget')
-                ->money('usd')
+                ->money('INR')
                 ->sortable(),
             Tables\Columns\TextColumn::make('created_at')
                 ->label('Created')

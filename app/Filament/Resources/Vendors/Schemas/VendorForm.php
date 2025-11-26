@@ -216,10 +216,12 @@ class VendorForm
                             ->schema([
                                 TextInput::make('min_price')
                                     ->numeric()
-                                    ->default(0),
+                                    ->default(0)
+                                    ->prefix('₹'),
                                 TextInput::make('max_price')
                                     ->numeric()
-                                    ->default(0),
+                                    ->default(0)
+                                    ->prefix('₹'),
                             ]),
                         Textarea::make('price_notes')
                             ->columnSpanFull(),

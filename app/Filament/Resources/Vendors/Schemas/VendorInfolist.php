@@ -59,10 +59,10 @@ class VendorInfolist
                 TextEntry::make('whatsapp')
                     ->placeholder('-'),
                 TextEntry::make('min_price')
-                    ->numeric()
+                    ->money('INR')
                     ->placeholder('-'),
                 TextEntry::make('max_price')
-                    ->numeric()
+                    ->money('INR')
                     ->placeholder('-'),
                 TextEntry::make('price_unit')
                     ->placeholder('-'),

@@ -85,7 +85,8 @@ class InquiryForm
                         TextInput::make('budget')
                             ->numeric()
                             ->minValue(0)
-                            ->step(0.01),
+                            ->step(0.01)
+                            ->prefix('₹'),
                         Select::make('status')
                             ->options([
                                 'new' => 'New',

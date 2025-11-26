@@ -141,9 +141,11 @@ class EditVendorProfile extends Page implements HasForms
                 Grid::make(2)
                     ->schema([
                         TextInput::make('min_price')
-                            ->numeric(),
+                            ->numeric()
+                            ->prefix('₹'),
                         TextInput::make('max_price')
-                            ->numeric(),
+                            ->numeric()
+                            ->prefix('₹'),
                     ]),
                 TextInput::make('price_unit'),
                 Textarea::make('price_notes')
