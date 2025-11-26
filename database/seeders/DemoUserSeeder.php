@@ -36,12 +36,13 @@ class DemoUserSeeder extends Seeder
         ];
 
         foreach ($admins as $admin) {
-            User::create([
+            $user = User::create([
                 ...$admin,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'active' => true,
             ]);
+            $user->assignRole('super_admin');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -100,12 +101,13 @@ class DemoUserSeeder extends Seeder
         ];
 
         foreach ($agencyOwners as $owner) {
-            User::create([
+            $user = User::create([
                 ...$owner,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'active' => true,
             ]);
+            $user->assignRole('agency');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -168,12 +170,13 @@ class DemoUserSeeder extends Seeder
         ];
 
         foreach ($vendorUsers as $vendor) {
-            User::create([
+            $user = User::create([
                 ...$vendor,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'active' => true,
             ]);
+            $user->assignRole('vendor');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -199,14 +202,15 @@ class DemoUserSeeder extends Seeder
         ];
 
         foreach ($clientUsers as $client) {
-            User::create([
+            $user = User::create([
                 ...$client,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'active' => true,
             ]);
+            $user->assignRole('client');
         }
 
-        $this->command->info('✓ Created ' . User::count() . ' users (2 admins, 8 agency owners, 31 vendors, 15 clients)');
+        $this->command->info('✓ Created ' . User::count() . ' users (2 admins, 8 agency owners, 31 vendors, 15 clients) with roles assigned');
     }
 }
