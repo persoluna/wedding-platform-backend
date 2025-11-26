@@ -239,7 +239,41 @@ Helpful commands:
 
 ---
 
-## 9. Testing & Quality Gates
+## 9. Testing
+
+The project includes a comprehensive test suite covering all core models and their relationships, business logic, and edge cases.
+
+### Running Tests
+
+```bash
+# Run all tests
+./vendor/bin/sail artisan test
+
+# Run with verbose output
+./vendor/bin/sail artisan test --verbose
+
+# Run specific test file
+./vendor/bin/sail artisan test tests/Unit/Models/VendorTest.php
+
+# Run tests with coverage (requires Xdebug)
+./vendor/bin/sail artisan test --coverage
+```
+
+### Test Coverage
+
+| Test Suite | Tests | Description |
+| --- | --- | --- |
+| `AgencyTest` | 17 | Agency relationships, rating stats, view counts, subscriptions, soft deletes |
+| `BookingTest` | 20 | Booking lifecycle, payment tracking, status transitions, scopes |
+| `ClientTest` | 16 | Client profiles, wedding calculations, planning status, preferences |
+| `InquiryTest` | 19 | Inquiry lifecycle, status transitions, messaging, urgency flags |
+| `MessageTest` | 12 | Message delivery, read status, attachments, system messages |
+| `UserTest` | 12 | User types, relationships, soft deletes, authentication |
+| `VendorTest` | 19 | Vendor profiles, availability, pricing, agency relationships |
+
+**Total: 117 tests with 190+ assertions**
+
+### Quality Gates
 
 | Check | Command |
 | --- | --- |
@@ -252,7 +286,65 @@ Aim to keep builds green before merging; run relevant tests whenever you touch d
 
 ---
 
-## 10. Deployment & Environment Notes
+## 10. Demo Data & Seeding
+
+The project includes comprehensive seeders that populate the database with realistic Indian wedding platform demo data for development and showcasing.
+
+### Running Seeders
+
+```bash
+# Seed demo data (safe to run multiple times - idempotent)
+./vendor/bin/sail artisan db:seed
+
+# Fresh database with demo data
+./vendor/bin/sail artisan migrate:fresh --seed
+```
+
+### Demo Data Summary
+
+| Entity | Count | Description |
+| --- | --- | --- |
+| Categories | 65 | Wedding service categories with hierarchical structure |
+| Event Types | 16 | Indian wedding types (Hindu, Muslim, Sikh, Christian, etc.) |
+| Users | 57 | 2 admins, 8 agency owners, 31 vendors, 15 clients |
+| Agencies | 8 | Wedding planning agencies across major cities |
+| Vendors | 20 | Photographers, caterers, decorators, venues, etc. |
+| Clients | 15 | Couples with realistic wedding details and budgets |
+| Inquiries | 54 | Realistic conversation threads |
+| Bookings | 62 | Various statuses (pending, confirmed, completed) |
+| Reviews | 8 | Realistic reviews with ratings |
+| Messages | 143 | Inquiry conversation messages |
+| Services | 71 | Vendor service offerings |
+| Packages | 84 | Agency and vendor packages |
+
+### Demo Login Credentials
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@shaadimandap.com` | `password` |
+| Agency | `vikram@dreamshaadi.in` | `password` |
+| Vendor | `arjun@pixelperfect.in` | `password` |
+| Client | `aarav.gupta@gmail.com` | `password` |
+
+### Seeders Structure
+
+| Seeder | Purpose |
+| --- | --- |
+| `CategorySeeder` | Wedding vendor categories (Photography, Venues, Catering, etc.) |
+| `EventTypeSeeder` | Indian wedding event types |
+| `DemoUserSeeder` | Admin, agency, vendor, and client user accounts |
+| `DemoAgencySeeder` | Wedding planning agencies with packages and FAQs |
+| `DemoVendorSeeder` | Vendors with services, packages, and realistic profiles |
+| `DemoClientSeeder` | Couples with wedding details, budgets, and preferences |
+| `DemoInquirySeeder` | Inquiry conversations between clients and vendors/agencies |
+| `DemoBookingSeeder` | Bookings with payment details and various statuses |
+| `DemoReviewSeeder` | Reviews with ratings and detailed feedback |
+
+All seeders are **idempotent** - they check for existing data before inserting, making them safe to run multiple times without creating duplicates.
+
+---
+
+## 11. Deployment & Environment Notes
 - Configure DB (`DB_*`), queue (`QUEUE_CONNECTION`), mail (`MAIL_*`), storage (`FILESYSTEM_DISK=public`) in `.env` across environments.
 - Always run `./vendor/bin/sail artisan storage:link` after provisioning so media URLs work.
 - Queues: inquiries, notifications, and media conversions can move to queues—set `QUEUE_CONNECTION=database` by default.
@@ -260,7 +352,7 @@ Aim to keep builds green before merging; run relevant tests whenever you touch d
 
 ---
 
-## 11. Roadmap / Next Steps
+## 12. Roadmap / Next Steps
 1. **Expand public API** – expose clients, inquiries (read-only), availability calendar endpoints, search suggestions.
 2. **Authenticated API** – issue Sanctum tokens so agencies/vendors can use the same endpoints outside Filament.
 3. **Caching & performance** – add response caching + ETags once marketing traffic scales.
