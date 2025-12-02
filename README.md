@@ -1,5 +1,7 @@
 # Wedding Platform Backend
 
+> 📸 **[View Screenshots & Feature Showcase →](SHOWCASE.md)**
+
 A Laravel 12 + Filament 4 backend that powers a curated wedding marketplace. The system lets administrators, agencies, and vendors collaborate on inquiries, bookings, and marketing assets while exposing a clean read-only API for the public website.
 
 ---
