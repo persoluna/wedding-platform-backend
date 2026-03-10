@@ -25,11 +25,12 @@ To develop a web-based wedding event planning platform that connects agencies, v
 - **For Platform**: Create a scalable, maintainable system that can expand to multiple regions and incorporate advanced features
 
 ### Technical Objectives
-- Implement a modern full-stack web application using Laravel Filament for backend administration and Next.js for frontend user experience
-- Develop an intelligent vendor matching algorithm that provides personalized recommendations based on user requirements
-- Create a user-friendly interface that works seamlessly across desktop and mobile devices
-- Build a secure, role-based authentication system supporting multiple user types
-- Design a scalable architecture that supports future enhancements including payment integration and advanced AI features
+- Implement a modern full-stack web application using Laravel and the TALL stack (Tailwind CSS, Alpine.js, Laravel, and Livewire).
+- Utilize Laravel Filament for backend administration and Laravel Blade with Vite for the frontend user experience.
+- Develop an intelligent vendor matching algorithm that provides personalized recommendations based on user requirements.
+- Create a user-friendly interface that works seamlessly across desktop and mobile devices.
+- Build a secure, role-based authentication system supporting multiple user types using FilamentShield.
+- Design a scalable, Domain-Driven (DDD) architecture that supports future enhancements including payment integration and advanced AI features.
 
 ---
 
@@ -38,19 +39,20 @@ To develop a web-based wedding event planning platform that connects agencies, v
 ### Geographic Scope
 - **Target Region**: Single county in India
 - **Language Support**: English language interface
+- **Currency**: Indian Rupee (₹)
 - **Market Focus**: Indian wedding traditions, customs, and vendor categories
 
 ### Functional Scope
 
 #### Included Features
-- **User Management**: Multi-tier user system (Super Admin, Agency, Vendor, Client)
-- **Vendor Directory**: Comprehensive listing of wedding service providers with India-specific categories
-- **AI-Powered Matching**: Intelligent vendor recommendation system based on user requirements
-- **Administrative Panel**: Laravel Filament-based backend for system management
-- **Client Interface**: Next.js frontend with Google OAuth authentication
-- **Communication System**: Vendor-agency messaging and client inquiry management
-- **Search & Discovery**: Advanced filtering and location-based vendor search
-- **Analytics Dashboard**: Performance tracking and business insights
+- **User Management**: Multi-tier user system (Super Admin, Agency, Vendor, Client) with role-based permissions managed by FilamentShield.
+- **Vendor Directory**: Comprehensive listing of wedding service providers with India-specific categories.
+- **AI-Powered Matching**: Intelligent vendor recommendation system based on user requirements.
+- **Administrative Panels**: Laravel Filament-based backend with separate panels for Super Admins, Agencies, and Vendors.
+- **Client Interface**: Frontend built with Laravel Blade and Vite, featuring Google OAuth authentication.
+- **Communication System**: Vendor-agency messaging and client inquiry management.
+- **Search & Discovery**: Advanced filtering and location-based vendor search.
+- **Analytics Dashboard**: Performance tracking and business insights.
 
 #### Excluded Features (Future Scope)
 - **Payment Processing**: Online payment and transaction management
@@ -60,17 +62,18 @@ To develop a web-based wedding event planning platform that connects agencies, v
 - **Multi-region Support**: Expansion beyond single county
 
 ### Technical Scope
-- **Backend**: Laravel framework with Filament admin panel
-- **Frontend**: Next.js with TypeScript and modern React features
-- **Database**: MySQL/PostgreSQL with optimized query structures
-- **Authentication**: Dual authentication system (email/password for admin, Google OAuth for clients)
-- **Deployment**: Web-based platform accessible via modern browsers
-- **Integration Ready**: Structured for future payment gateway and advanced AI service integration
+- **Backend**: Laravel framework with a Filament admin panel. The business logic is structured following a Domain-Driven Design (DDD) approach.
+- **Frontend**: Laravel Blade templates with Vite for asset bundling.
+- **Database**: MySQL/PostgreSQL with optimized query structures.
+- **Authentication**: Dual authentication system (email/password for admin panels, Google OAuth for clients).
+- **Permissions**: Role-based access control is managed by the `FilamentShield` library.
+- **Deployment**: Web-based platform accessible via modern browsers.
+- **Integration Ready**: Structured for future payment gateway and advanced AI service integration.
 
 ### User Scope
 - **Target Users**: Wedding agencies, individual vendors, couples planning weddings
 - **User Base**: Local market within the specified county
-- **Access Levels**: Free browsing for guests, authenticated access for inquiries, administrative access for business users
+- **Access Levels**: Free browsing for guests, authenticated access for inquiries, administrative access for business users (Super Admin, Agency, Vendor).
 
 ### Super Admin Features
 

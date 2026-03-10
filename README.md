@@ -234,6 +234,108 @@ cp .env.example .env
 ./vendor/bin/sail artisan migrate --seed
 ```
 
+### 8.1 Windows Setup (Recommended: WSL2 + Docker Desktop)
+
+This project is easiest to run on Windows through **WSL2**. The repo uses Laravel Sail, Bash-style scripts, and a Docker-based PostgreSQL stack, so running it inside Ubuntu on WSL avoids most Windows path and shell issues.
+
+#### Prerequisites
+- Install **WSL2** with Ubuntu 24.04 or 22.04.
+- Install **Docker Desktop** and enable **WSL Integration** for the Ubuntu distro.
+- Install **Git** inside WSL.
+
+#### 1. Open Ubuntu (WSL) and clone the project inside Linux filesystem
+
+Store the repo somewhere under `/home/<your-user>` rather than under `/mnt/c/...` for better performance.
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git
+
+cd ~
+git clone <your-repository-url> wedding-platform
+cd wedding-platform/wedding-platform-backend
+```
+
+#### 2. Prepare the environment file for Sail + PostgreSQL
+
+```bash
+cp .env.example .env
+```
+
+Update these values in `.env` before starting the containers:
+
+```dotenv
+APP_URL=http://localhost
+
+DB_CONNECTION=pgsql
+DB_HOST=pgsql
+DB_PORT=5432
+DB_DATABASE=wedding_platform
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+QUEUE_CONNECTION=database
+CACHE_STORE=database
+SESSION_DRIVER=database
+
+APP_PORT=80
+VITE_PORT=5173
+FORWARD_DB_PORT=5432
+FORWARD_REDIS_PORT=6379
+FORWARD_MAILPIT_PORT=1025
+FORWARD_MAILPIT_DASHBOARD_PORT=8025
+```
+
+#### 3. Start Docker services and install dependencies
+
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail composer install
+./vendor/bin/sail npm install
+```
+
+#### 4. Initialize the application
+
+```bash
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link
+```
+
+#### 5. Run Vite for frontend assets
+
+Keep this running in a separate WSL terminal:
+
+```bash
+cd ~/wedding-platform/wedding-platform-backend
+./vendor/bin/sail npm run dev
+```
+
+#### 6. Open the app from Windows
+
+- Main app / default URL: `http://localhost`
+- Admin panel: `http://localhost/admin`
+- Agency panel: `http://localhost/agency`
+- Vendor panel: `http://localhost/vendor`
+- Mailpit dashboard: `http://localhost:8025`
+- Vite dev server: `http://localhost:5173`
+
+#### 7. Useful commands
+
+```bash
+./vendor/bin/sail artisan test
+./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan optimize:clear
+./vendor/bin/sail down
+```
+
+#### Windows-specific notes
+- Run project commands from **WSL Ubuntu**, not PowerShell, for the smoothest experience.
+- The helper script in [switch-env.sh](switch-env.sh) is a Bash script and should also be run from WSL.
+- If port 80 is already in use on Windows, change `APP_PORT` in `.env`, then reopen the app on that port.
+- If Docker volumes or file watching feel slow, confirm the repo is inside the WSL filesystem, not on the Windows drive.
+- If Docker commands fail inside WSL, open Docker Desktop and verify **Settings → Resources → WSL Integration** is enabled for the distro.
+
 Helpful commands:
 - `./vendor/bin/sail artisan make:filament-resource Vendor` – scaffold additional resources.
 - `./vendor/bin/sail artisan migrate:fresh --seed` – reset the DB while iterating quickly.
