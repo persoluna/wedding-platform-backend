@@ -194,7 +194,7 @@
                                     const events = rawAvailabilities.map(a => {
                                         let color = '#C2B28F'; // champagne-500 default available
                                         let title = 'Available';
-                                        
+
                                         if (a.status === 'fully_booked') {
                                             color = '#f43f5e'; // rose-500
                                             title = 'Booked';

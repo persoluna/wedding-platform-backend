@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class VendorAvailabilityResource extends Resource
 {
@@ -22,7 +23,7 @@ class VendorAvailabilityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
-    protected static ?string $navigationGroup = 'Availability Mapping';
+    protected static UnitEnum|string|null $navigationGroup = 'Availability Mapping';
 
     protected static ?int $navigationSort = 60;
 

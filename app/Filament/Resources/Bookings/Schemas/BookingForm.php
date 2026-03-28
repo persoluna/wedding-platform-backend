@@ -63,7 +63,7 @@ class BookingForm
                 TextInput::make('balance_amount')
                     ->numeric()
                     ->prefix('₹'),
-                
+
                 DateTimePicker::make('deposit_paid_at'),
                 DateTimePicker::make('full_payment_received_at'),
 
@@ -75,7 +75,7 @@ class BookingForm
                     ->columnSpanFull(),
                 Textarea::make('terms_and_conditions')
                     ->columnSpanFull(),
-                
+
             ]);
     }
 }

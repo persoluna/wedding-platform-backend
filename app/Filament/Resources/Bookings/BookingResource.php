@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class BookingResource extends Resource
 {
@@ -23,7 +24,7 @@ class BookingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $navigationGroup = 'Customer Pipeline';
+    protected static UnitEnum|string|null $navigationGroup = 'Customer Pipeline';
 
     protected static ?int $navigationSort = 50;
 
