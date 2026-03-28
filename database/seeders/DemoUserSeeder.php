@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DemoUserSeeder extends Seeder
 {
@@ -14,6 +15,12 @@ class DemoUserSeeder extends Seeder
         if (User::where('email', 'admin@shaadimandap.com')->exists()) {
             $this->command->info('⏭ Demo users already seeded, skipping...');
             return;
+        }
+
+        // Create Roles first
+        $roles = ['super_admin', 'admin', 'agency', 'vendor', 'client'];
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
         // ═══════════════════════════════════════════════════════════════════
