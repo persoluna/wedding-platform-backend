@@ -19,22 +19,15 @@
             <a href="/explore"
                :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
                class="relative text-sm font-medium tracking-wide transition-colors group py-2">
-               Explore
-               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
-            </a>
-
-            <a href="/stories"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
-               class="relative text-sm font-medium tracking-wide transition-colors group py-2">
-               Stories
-               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
+                Explore
+                <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
             </a>
 
             <a href="/saved"
                :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
                class="relative text-sm font-medium tracking-wide transition-colors group py-2">
-               Saved
-               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
+                Saved
+                <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
             </a>
         </div>
 
@@ -49,16 +42,16 @@
             <form action="{{ route('logout') }}" method="POST" class="inline">
                 @csrf
                 <button type="submit"
-                    :class="{'bg-transparent text-white border-[1px] border-[rgba(255,255,255,0.2)] hover:bg-white/10': isHome && !scrolled, 'bg-navy-900 border border-transparent text-white hover:bg-navy-800': !(isHome && !scrolled)}"
+                    :class="{'bg-transparent text-white border border-[rgba(255,255,255,0.2)] hover:bg-white/10': isHome && !scrolled, 'bg-navy-900 border border-transparent text-white hover:bg-navy-800': !(isHome && !scrolled)}"
                     class="hidden md:flex items-center px-6 py-2 rounded-[20px] text-xs font-semibold tracking-widest uppercase transition-all duration-300 backdrop-blur-md shadow-sm hover:-translate-y-0.5">
-                    Logout
+                    Log out
                 </button>
             </form>
             @else
             <a href="/login"
                class="hidden md:flex items-center text-sm font-medium tracking-wide transition-colors group relative py-2 mr-2"
                :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}">
-                Sign In
+                Log in
                 <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
             </a>
             <a href="/register"
@@ -87,17 +80,16 @@
          class="md:hidden fixed inset-0 top-[70px] bg-white  z-40 overflow-hidden h-screen">
         <div class="px-6 py-8 flex flex-col space-y-6">
             <a href="/explore" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Explore</a>
-            <a href="/saved" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Saved Listings</a>
-            <a href="/stories" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Stories</a>
+            <a href="/saved" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Saved</a>
             <hr class="border-stone-200 " />
             @auth
-                <a href="/dashboard" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Dashboard</a>
+                <a href="/dashboard" @click="isOpen = false" class="text-3xl font-serif text-stone-900 flex items-center gap-2">Dashboard</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="text-3xl font-serif text-stone-900  text-left">Logout</button>
+                    <button type="submit" class="text-3xl font-serif text-stone-900  text-left">Log out</button>
                 </form>
             @else
-                <a href="/login" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Login</a>
+                <a href="/login" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Log in</a>
                 <a href="/register" @click="isOpen = false" class="text-3xl font-serif text-stone-900 ">Create Account</a>
             @endauth
         </div>
