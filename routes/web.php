@@ -29,8 +29,8 @@ Route::get('/', function () {
         ->toArray();
     return view('welcome', compact('featuredVendors', 'popularLocations'));
 })->name('home');
-use App\Http\Controllers\ExploreController;
-Route::get('/explore', [ExploreController::class, 'index'])->name('explore');
+use App\Livewire\ExploreListings;
+Route::get('/explore', ExploreListings::class)->name('explore');
 use App\Http\Controllers\ListingController;
 Route::get('/listing/{type}/{slug}', [ListingController::class, 'show'])->name('listing.show');
 use App\Http\Controllers\InquiryController;
@@ -47,8 +47,13 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ReviewController;
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/review/create', [ReviewController::class, 'create'])->name('review.create');
+    Route::post('/review/{booking}', [ReviewController::class, 'store'])->name('review.store');
 });
 
 // Move Saved to essentially be public so LocalStorage can power it for guests as well

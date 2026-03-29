@@ -30,6 +30,30 @@
                     <p class="text-stone-600">Here you can keep track of all the vendors and agencies you've contacted.</p>
                 </div>
 
+                @if($notifications->count() > 0)
+                <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-stone-100 flex justify-between items-center bg-stone-50">
+                        <h3 class="text-lg font-semibold text-stone-900">Recent Notifications</h3>
+                    </div>
+                    <div class="divide-y divide-stone-100">
+                        @foreach($notifications as $notification)
+                        <div class="p-4 {{ is_null($notification->read_at) ? 'bg-champagne-50/50' : '' }}">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-champagne-100 p-2 rounded-full text-champagne-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-medium text-stone-900">{{ $notification->data['title'] ?? 'Notification' }}</h4>
+                                    <p class="text-sm text-stone-600 mt-0.5">{{ $notification->data['body'] ?? '' }}</p>
+                                    <span class="text-xs text-stone-400 block mt-1">{{ $notification->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <!-- Recent Inquiries -->
                 <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
                     <div class="px-6 py-5 border-b border-stone-100 flex justify-between items-center bg-stone-50">
@@ -95,7 +119,43 @@
 
                     @if($client->bookings->count() > 0)
                         <div class="divide-y divide-stone-100">
-                            <!-- Loop through bookings when implemented -->
+                            @foreach($client->bookings as $booking)
+                            @php
+                                $target = $booking->bookable;
+                                $isPast = $booking->event_date && $booking->event_date->isPast();
+                                $hasReviewed = \App\Models\Review::where('client_id', $client->id)
+                                    ->where('reviewable_id', $booking->bookable_id)
+                                    ->where('reviewable_type', $booking->bookable_type)
+                                    ->exists();
+                            @endphp
+                            <div class="p-6 hover:bg-stone-50 transition-colors">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $booking->status === 'confirmed' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
+                                                {{ ucfirst($booking->status) }}
+                                            </span>
+                                            <span class="text-sm font-medium text-stone-500">{{ $booking->created_at->format('M d, Y') }}</span>
+                                        </div>
+                                        <h4 class="text-xl font-medium text-navy-900 mb-1">
+                                            {{ $target->business_name ?? 'Unknown Business' }}
+                                        </h4>
+                                        <p class="text-stone-600">Event Date: {{ $booking->event_date ? $booking->event_date->format('M d, Y') : 'TBD' }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        @if($isPast && !$hasReviewed)
+                                            <a href="{{ route('review.create', ['booking' => $booking->id]) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-champagne-600 hover:bg-champagne-700 transition-colors shadow-sm">
+                                                Leave Review
+                                            </a>
+                                        @elseif($hasReviewed)
+                                            <span class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-xl text-stone-500 bg-stone-100">
+                                                Reviewed
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     @else
                         <div class="p-8 text-center text-stone-500 bg-white">

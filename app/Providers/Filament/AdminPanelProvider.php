@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->databaseNotifications()
             ->font('Plus Jakarta Sans', provider: GoogleFontProvider::class)
             ->colors([
                 'primary' => Color::Indigo,

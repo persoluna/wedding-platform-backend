@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Inquiry;
 use App\Models\Vendor;
 use App\Models\Agency;
+use Filament\Notifications\Notification;
 
 class InquiryController extends Controller
 {
@@ -70,6 +71,22 @@ class InquiryController extends Controller
         }
 
         $inquiry->save();
+
+        $recipientUser = null;
+        if ($type === 'vendor') {
+            $recipientUser = Vendor::find($id)?->user;
+        } else if ($type === 'agency') {
+            $recipientUser = Agency::find($id)?->user;
+        }
+
+        if ($recipientUser) {
+            Notification::make()
+                ->title('New Inquiry Received')
+                ->body("{$inquiry->name} sent you a new inquiry" . ($inquiry->event_date ? " for {$inquiry->event_date->format('M d, Y')}" : ""))
+                ->icon('heroicon-o-envelope')
+                ->success()
+                ->sendToDatabase($recipientUser);
+        }
 
         return back()->with('success', 'Your inquiry has been successfully sent!');
     }

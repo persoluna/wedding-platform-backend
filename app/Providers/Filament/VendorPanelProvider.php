@@ -31,6 +31,7 @@ class VendorPanelProvider extends PanelProvider
             ->id('vendor')
             ->path('vendor')
             ->login()
+            ->databaseNotifications()
             ->font('Plus Jakarta Sans', provider: GoogleFontProvider::class)
             ->colors([
                 'primary' => Color::Emerald,

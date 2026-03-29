@@ -15,13 +15,17 @@ class ClientController extends Controller
             return redirect()->route('home')->with('error', 'Unauthorized access.');
         }
 
-        $client = $user->client()->with(['inquiries.vendor', 'inquiries.agency', 'bookings.vendor', 'bookings.agency'])->first();
+        $client = $user->client()->with(['inquiries.vendor', 'inquiries.agency', 'bookings.bookable'])->first();
 
         if (!$client) {
             // Failsafe in case client record is missing
             $client = $user->client()->create();
         }
 
-        return view('client.dashboard', compact('client', 'user'));
+        $notifications = clone $user->notifications();
+        $user->unreadNotifications->markAsRead();
+        $notifications = $notifications->latest()->take(5)->get();
+
+        return view('client.dashboard', compact('client', 'user', 'notifications'));
     }
 }

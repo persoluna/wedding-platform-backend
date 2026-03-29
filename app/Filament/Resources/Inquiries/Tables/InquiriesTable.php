@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Inquiries\Tables;
 
 use App\Models\Booking;
 use App\Models\VendorAvailability;
+use Filament\Notifications\Notification;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -146,6 +147,15 @@ class InquiriesTable
                             }
 
                             $record->close('booked');
+
+                            if ($record->client && $record->client->user) {
+                                Notification::make()
+                                    ->title('Inquiry Converted to Booking')
+                                    ->body('Your inquiry has been converted to a booking! Check your dashboard for details.')
+                                    ->icon('heroicon-o-check-circle')
+                                    ->success()
+                                    ->sendToDatabase($record->client->user);
+                            }
                         })
                         ->requiresConfirmation(),
                     EditAction::make(),

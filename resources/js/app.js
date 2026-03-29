@@ -1,10 +1,13 @@
 import './bootstrap';
-import Alpine from 'alpinejs';
 import { initParticleBackground } from './particles';
 
-window.Alpine = Alpine;
+// We do NOT import Alpine from 'alpinejs' because Livewire 3 provides it globally automatically.
+// We also do not need to call window.Alpine.start() or Livewire.start() manually.
 
 document.addEventListener('alpine:init', () => {
+    // We use the globally provided Alpine object from Livewire
+    let Alpine = window.Alpine;
+
     // Particle Background Data component
     Alpine.data('partyBg', () => ({
         cleanup: null,
@@ -27,7 +30,7 @@ document.addEventListener('alpine:init', () => {
         apiLocations: [],
         isSearching: false,
         indianLocations: serverLocations || [
-            "Mumbai, Maharashtra", "Delhi, NCR", "Bangalore, Karnataka", "Chennai, Tamil Nadu", 
+            "Mumbai, Maharashtra", "Delhi, NCR", "Bangalore, Karnataka", "Chennai, Tamil Nadu",
             "Kolkata, West Bengal", "Hyderabad, Telangana", "Pune, Maharashtra", "Ahmedabad, Gujarat",
             "Gurgaon, Haryana", "Noida, Uttar Pradesh", "Surat, Gujarat", "Vadodara, Gujarat",
             "Jaipur, Rajasthan", "Udaipur, Rajasthan", "Jodhpur, Rajasthan", "Jaisalmer, Rajasthan",
@@ -38,16 +41,16 @@ document.addEventListener('alpine:init', () => {
             "Alibaug, Maharashtra", "Andaman & Nicobar Islands", "Srinagar, Kashmir", "Leh, Ladakh",
             "Chandigarh", "Lucknow, Uttar Pradesh", "Kanpur, Uttar Pradesh", "Indore, Madhya Pradesh"
         ],
-        
+
         date: null,
         showDatePicker: false,
         currentMonth: new Date().getMonth(),
         currentYear: new Date().getFullYear(),
         months: [
-          "January", "February", "March", "April", "May", "June", 
+          "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
         ],
-        
+
         get daysInMonth() {
             return new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
         },
@@ -60,12 +63,12 @@ document.addEventListener('alpine:init', () => {
         get realYear() {
             return this.currentYear + Math.floor(this.currentMonth / 12);
         },
-        
+
         handleDateSelect(day) {
             this.date = new Date(this.realYear, this.realMonthIndex, day);
             this.showDatePicker = false;
         },
-        
+
         get formattedDate() {
             if (!this.date) return '';
             return this.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -112,7 +115,7 @@ document.addEventListener('alpine:init', () => {
                 this.isSearching = false;
             }
         },
-        
+
         init() {
             this.$watch('locationQuery', (val) => {
                 clearTimeout(this.timeout);
@@ -123,5 +126,3 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 });
-
-Alpine.start();
