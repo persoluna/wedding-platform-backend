@@ -3,57 +3,68 @@
 <nav x-data="{ scrolled: false, isOpen: false, isHome: {{ $transparent ? 'true' : 'false' }} }"
      @scroll.window="scrolled = (window.pageYOffset > 20)"
      :class="{
-         'bg-transparent border-transparent py-6': isHome && !scrolled,
-         'bg-white/90 backdrop-blur-xl shadow-sm border-stone-200/50 py-4': !(isHome && !scrolled)
+         'bg-[rgba(0,0,0,0.4)] backdrop-blur-[12px] border-transparent': isHome && !scrolled,
+         'bg-white/80 backdrop-blur-2xl shadow-sm border-white/20': !(isHome && !scrolled)
      }"
-     class="fixed w-full z-50 transition-all duration-500 border-b">
+     class="fixed w-full z-50 transition-all duration-500 border-b h-[72px] flex items-center">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between w-full">
         <a href="/"
-           :class="{'text-white': isHome && !scrolled, 'text-stone-900': !(isHome && !scrolled)}"
+           :class="{'text-white': isHome && !scrolled, 'text-navy-900': !(isHome && !scrolled)}"
            class="font-display text-2xl tracking-widest font-bold transition-colors">
             NUPTIAL<span :class="{'text-champagne-300': isHome && !scrolled, 'text-champagne-500': !(isHome && !scrolled)}">.</span>
         </a>
 
-        <div class="hidden md:flex items-center space-x-8">
+        <div class="hidden md:flex items-center space-x-10">
             <a href="/explore"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-champagne-600': !(isHome && !scrolled)}"
-               class="text-sm font-medium tracking-wide transition-colors">Explore</a>
+               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
+               class="relative text-sm font-medium tracking-wide transition-colors group py-2">
+               Explore
+               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
+            </a>
 
             <a href="/stories"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-champagne-600': !(isHome && !scrolled)}"
-               class="text-sm font-medium tracking-wide transition-colors">Stories</a>
+               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
+               class="relative text-sm font-medium tracking-wide transition-colors group py-2">
+               Stories
+               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
+            </a>
 
             <a href="/saved"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-champagne-600': !(isHome && !scrolled)}"
-               class="text-sm font-medium tracking-wide transition-colors">Saved</a>
+               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
+               class="relative text-sm font-medium tracking-wide transition-colors group py-2">
+               Saved
+               <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
+            </a>
         </div>
 
         <div class="flex items-center space-x-4">
             @auth
             <a href="/dashboard"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-champagne-600': !(isHome && !scrolled)}"
-               class="hidden md:flex items-center text-sm font-medium tracking-wide transition-colors">
+               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}"
+               class="hidden md:flex items-center text-sm font-medium tracking-wide transition-colors group relative py-2 mr-2">
                 Dashboard
+                <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
             </a>
             <form action="{{ route('logout') }}" method="POST" class="inline">
                 @csrf
                 <button type="submit"
-                    :class="{'bg-white/10 text-white hover:bg-white/20': isHome && !scrolled, 'bg-stone-900 text-white hover:bg-stone-800': !(isHome && !scrolled)}"
-                    class="hidden md:flex items-center px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-md">
+                    :class="{'bg-transparent text-white border-[1px] border-[rgba(255,255,255,0.2)] hover:bg-white/10': isHome && !scrolled, 'bg-navy-900 border border-transparent text-white hover:bg-navy-800': !(isHome && !scrolled)}"
+                    class="hidden md:flex items-center px-6 py-2 rounded-[20px] text-xs font-semibold tracking-widest uppercase transition-all duration-300 backdrop-blur-md shadow-sm hover:-translate-y-0.5">
                     Logout
                 </button>
             </form>
             @else
             <a href="/login"
-               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-champagne-600': !(isHome && !scrolled)}"
-               class="hidden md:flex items-center text-sm font-medium tracking-wide transition-colors">
-                Log In
+               class="hidden md:flex items-center text-sm font-medium tracking-wide transition-colors group relative py-2 mr-2"
+               :class="{'text-white/90 hover:text-white': isHome && !scrolled, 'text-stone-700 hover:text-navy-900': !(isHome && !scrolled)}">
+                Sign In
+                <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-champagne-400 group-hover:w-full group-hover:left-0 transition-all duration-300 ease-out"></span>
             </a>
             <a href="/register"
-                :class="{'bg-white/10 text-white hover:bg-white/20 border border-white/20': isHome && !scrolled, 'bg-stone-900 text-white hover:bg-stone-800': !(isHome && !scrolled)}"
-                class="hidden md:flex items-center px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-md">
-                Sign Up
+                :class="{'bg-transparent text-white border border-[rgba(255,255,255,0.2)] hover:bg-white/10': isHome && !scrolled, 'bg-navy-900 border border-transparent text-white hover:bg-navy-800': !(isHome && !scrolled)}"
+                class="hidden md:flex items-center px-6 py-2 rounded-[20px] text-xs font-semibold tracking-widest uppercase transition-all duration-300 backdrop-blur-md shadow-sm hover:-translate-y-0.5">
+                Join
             </a>
             @endauth
             <button @click="isOpen = !isOpen"

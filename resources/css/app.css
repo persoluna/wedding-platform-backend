@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Cinzel:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -7,24 +7,31 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-serif: 'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-display: 'Cinzel', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-display: 'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+
+    --color-bg-primary: #FAF9F7;
+    --color-text-primary: #1C1C1C;
+    --color-accent-luxury: #C8A97E;
+    --color-accent-soft: #EAE3D9;
+    --color-cta-dark: #1F2A44;
+    --color-success: #8F9E8B;
 
     --color-champagne-50: #fcfbf7;
     --color-champagne-100: #f6f3eb;
     --color-champagne-200: #ede4d3;
     --color-champagne-300: #e0cdb0;
-    --color-champagne-400: #d1b086;
-    --color-champagne-500: #c59663;
+    --color-champagne-400: #C8A97E;
+    --color-champagne-500: #C8A97E;
     --color-champagne-600: #ba7f52;
     --color-champagne-700: #9a6446;
     --color-champagne-800: #7e523e;
     --color-champagne-900: #664436;
 
-    --color-navy-800: #1e293b;
-    --color-navy-900: #0f172a;
-    --color-navy-950: #020617;
+    --color-navy-800: #1F2A44;
+    --color-navy-900: #1F2A44;
+    --color-navy-950: #0f1626;
 }
 
 /* Custom scrollbar for webkit */
