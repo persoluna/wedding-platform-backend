@@ -25,7 +25,7 @@ Route::get('/', function () {
         ->distinct()
         ->limit(20)
         ->pluck('city')
-        ->map(fn($city) => $city . ', US') // Assuming US context, or leave empty. Can adjust based on real data
+        ->map(fn($city) => $city . ', IN') // Assuming IN context, can adjust based on real data
         ->toArray();
     return view('welcome', compact('featuredVendors', 'popularLocations'));
 })->name('home');

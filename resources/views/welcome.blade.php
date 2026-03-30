@@ -124,7 +124,7 @@
                                     type: 'vendor',
                                     title: @js($vendor->business_name),
                                     image: @js($thumb),
-                                    location: @js($vendor->city . ', ' . ($vendor->country ?? 'US')),
+                                    location: @js($vendor->city . ', ' . ($vendor->country ?? 'IN')),
                                     rating: @js(number_format($vendor->avg_rating ?? 5.0, 1)),
                                     reviews: @js($vendor->review_count ?? 12),
                                     slug: @js($vendor->slug)

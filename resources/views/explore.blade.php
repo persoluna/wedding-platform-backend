@@ -109,7 +109,7 @@
                                                     type: '{{ $listing->listing_type }}',
                                                     title: @js($listing->business_name),
                                                     image: @js($imageUrl),
-                                                    location: @js($listing->city . ', ' . ($listing->state ?? 'NY')),
+                                                    location: @js($listing->city . ', ' . ($listing->state ?? 'MH')),
                                                     rating: @js(number_format($listing->avg_rating ?? 5.0, 1)),
                                                     reviews: @js($listing->review_count ?? 12),
                                                     slug: @js($listing->slug)
@@ -136,7 +136,7 @@
                                             </div>
                                             <p class="text-stone-500 text-sm mb-4 flex items-center gap-1.5 line-clamp-1">
                                                 <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                                {{ $listing->city }}, {{ $listing->state ?? 'NY' }}
+                                                {{ $listing->city }}, {{ $listing->state ?? 'MH' }}
                                             </p>
 
                                             <div class="mt-auto pt-4 border-t border-stone-100 flex items-center justify-between">

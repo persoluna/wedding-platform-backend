@@ -51,7 +51,7 @@ We believe every love story deserves a unique celebration. Our end-to-end servic
                 ],
                 'faqs' => [
                     ['question' => 'How far in advance should we book?', 'answer' => 'We recommend booking at least 6-8 months in advance for regular weddings and 12 months for destination weddings to ensure availability of top venues and vendors.'],
-                    ['question' => 'Do you handle destination weddings?', 'answer' => 'Yes! We have executed weddings in Udaipur, Jaipur, Goa, Kerala, Dubai, Thailand, and several European destinations.'],
+                    ['question' => 'Do you handle destination weddings?', 'answer' => 'Yes! We have executed weddings in Udaipur, Jaipur, Goa, Kerala, Dubai, Thailand, and several Asian destinations.'],
                     ['question' => 'What is your payment structure?', 'answer' => 'We typically require 25% advance at booking, 50% one month before the wedding, and the balance 2 weeks before the event.'],
                 ],
             ],
@@ -252,11 +252,11 @@ Our team includes international logistics experts, multi-lingual coordinators, a
                 'packages' => [
                     ['name' => 'India Destination', 'price' => 1500000, 'description' => 'Destination wedding within India – Goa, Udaipur, Kerala, or Andamans for up to 100 guests.'],
                     ['name' => 'International Escape', 'price' => 4000000, 'description' => 'International destination wedding in Thailand, Bali, Dubai, or Maldives with full logistics support.'],
-                    ['name' => 'Global Luxury Package', 'price' => 8000000, 'description' => 'Ultra-luxury destination wedding in Europe, USA, or Caribbean with private villa booking and exclusive experiences.'],
+                    ['name' => 'Global Luxury Package', 'price' => 8000000, 'description' => 'Ultra-luxury destination wedding in Sri Lanka, Middle East, or Southeast Asia with private villa booking and exclusive experiences.'],
                 ],
                 'faqs' => [
                     ['question' => 'How do you handle international logistics?', 'answer' => 'Our team coordinates everything – from group flight bookings to hotel accommodations, visa assistance, and local transportation. We also provide detailed travel guides for guests.'],
-                    ['question' => 'What destinations do you recommend?', 'answer' => 'Popular choices include Thailand (Phuket, Koh Samui), Bali, Maldives, Dubai, Mauritius, and European destinations like Italy and Portugal.'],
+                    ['question' => 'What destinations do you recommend?', 'answer' => 'Popular choices include Thailand (Phuket, Koh Samui), Bali, Maldives, Dubai, Mauritius, and scenic destinations like Sri Lanka and Vietnam.'],
                 ],
             ],
             [

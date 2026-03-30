@@ -232,7 +232,7 @@ We are renowned for our kebabs – from melt-in-mouth galouti to crispy seekh �
                 'email' => 'pooja@floralaffairs.in',
                 'category' => 'Wedding Decorators',
                 'business_name' => 'Floral Affairs',
-                'description' => 'Floral Affairs transforms wedding venues into dreamy wonderlands using the finest flowers, fabrics, and innovative design. Founded by Pooja Mehta, a graduate of the London School of Floristry, we bring international design sensibilities to Indian weddings.
+                'description' => 'Floral Affairs transforms wedding venues into dreamy wonderlands using the finest flowers, fabrics, and innovative design. Founded by Pooja Mehta, a graduate of NIFD Floral Design, we bring international design sensibilities to Indian weddings.
 
 We source fresh flowers daily from markets in Bangalore, Ooty, and even import specialty blooms from Thailand and Netherlands for premium events. From cascading orchid chandeliers to rose-covered mandaps, our floral installations create Instagram-worthy moments at every corner. We also specialize in sustainable décor using potted plants and eco-friendly materials.',
                 'city' => 'Mumbai',
@@ -300,7 +300,7 @@ Our design philosophy combines traditional Indian grandeur with contemporary ele
                 'email' => 'simran@bridalbysim.com',
                 'category' => 'Bridal Makeup Artists',
                 'business_name' => 'Bridal by Simran',
-                'description' => 'Bridal by Simran is one of Delhi\'s most sought-after bridal makeup artists, known for creating looks that enhance natural beauty while ensuring you look stunning in photos and videos. Simran Kaur trained at the London College of Makeup and has worked with top fashion photographers and Bollywood productions.
+                'description' => 'Bridal by Simran is one of Delhi\'s most sought-after bridal makeup artists, known for creating looks that enhance natural beauty while ensuring you look stunning in photos and videos. Simran Kaur trained at VLCC Institute of Beauty and Styling and has worked with top fashion photographers and Bollywood productions.
 
 Every bride gets a personal consultation and trial session to perfect their wedding look. We specialize in HD airbrush makeup, which lasts 12+ hours and photographs beautifully. From traditional Indian brides to modern minimalist looks, we customize every makeover to match your outfit, skin tone, and personality.',
                 'city' => 'New Delhi',

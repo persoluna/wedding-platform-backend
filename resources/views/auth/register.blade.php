@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <label for="wedding_city" class="block text-sm font-medium text-stone-700 mb-1">Wedding City</label>
-                        <input type="text" name="wedding_city" id="wedding_city" value="{{ old('wedding_city') }}" placeholder="e.g. New York, NY"
+                        <input type="text" name="wedding_city" id="wedding_city" value="{{ old('wedding_city') }}" placeholder="e.g. Mumbai, MH"
                             class="w-full rounded-xl border border-stone-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-champagne-500 focus:border-transparent transition-all">
                     </div>
                 </div>

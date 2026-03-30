@@ -141,7 +141,7 @@ Accept: application/json
 			"description": "Full-service planning studio...",
 			"location": {
 				"city": "Toronto",
-				"country": "Canada"
+				"country": "India"
 			},
 			"stats": {
 				"avg_rating": 4.9,
@@ -190,7 +190,7 @@ Accept: application/json
 		},
 		"location": {
 			"city": "Vancouver",
-			"country": "Canada"
+			"country": "India"
 		},
 		"services": [
 			{"id": 11, "name": "Bouquet design", "price": 250}

@@ -94,7 +94,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-stone-700 uppercase tracking-widest mb-1.5">Primary Location *</label>
-                                    <input type="text" wire:model="location" placeholder="e.g. New York, NY" class="w-full border-stone-200 rounded-lg px-4 py-3 focus:border-champagne-500 focus:ring focus:ring-champagne-200 transition-all font-light text-stone-800" required>
+                                    <input type="text" wire:model="location" placeholder="e.g. Mumbai, MH" class="w-full border-stone-200 rounded-lg px-4 py-3 focus:border-champagne-500 focus:ring focus:ring-champagne-200 transition-all font-light text-stone-800" required>
                                     @error('location') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                                 </div>
                             </div>
