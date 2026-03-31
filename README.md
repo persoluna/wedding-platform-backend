@@ -6,6 +6,21 @@ A Laravel 12 + Livewire 3 + Filament 4 backend that powers a curated luxury wedd
 
 ---
 
+## 🚀 Recent Updates
+The system has highly evolved, hitting **Phase 3/4** of its development. Key new implementations include:
+- **AI Semantic Search:** Livewire-powered queries routed via Google's Gemini to parse user intentions (e.g. "budget florists" -> `$max_price=30000`) directly onto Postgres.
+- **Strict Multitenancy Constraints:** 3 explicitly partitioned Filament portals (`/admin`, `/vendor`, `/agency`) with strictly enforced route blocking, role intercepts, and a `Gate::before` intercept mechanism.
+- **The Core Booking State Machine:** A mathematically rigid framework controlling Deposits (`deposit_amount`), Final Balances, and natively intercepting duplicated spam inquiries directly from the `.blade`/Livewire components.
+- **Active Asynchronous Features:** LocalStorage hydration allowing unregistered clients to 'heart' listings, caching them dynamically until they officially log in.
+- **Database Push Notifications:** Zero-refresh Filament popup notifications triggering immediately when an Inquiry hits a new status.
+- **The Rupee / India Globalization:** A massive system-wide find-and-replace upgrading the default currency strictly to INR (₹) across all queries, charts, and public dashboards.
+
+For a deeply granular map of all underlying platform logic, refer to:
+- [COMPREHENSIVE_PROJECT_ARCHITECTURE.md](COMPREHENSIVE_PROJECT_ARCHITECTURE.md)
+- [PROJECT_CHANGELOG.md](PROJECT_CHANGELOG.md)
+
+---
+
 ## 1. Mission & Scope
 
 | Goal | Description |
@@ -26,7 +41,7 @@ A Laravel 12 + Livewire 3 + Filament 4 backend that powers a curated luxury wedd
 | Database | PostgreSQL via Sail | Reliable relational storage with JSON support for flexible attributes. |
 | Media | Spatie Laravel Media Library (`media` table) | Unified handling for logos, banners, galleries; enforces single-file/logo collections. |
 | APIs | Versioned read-only endpoints under `routes/api.php` (currently `v1`) | Decouples public site needs from Filament; makes it easy to evolve versions later. |
-| Auth | Panel auth today; Sanctum-ready for future API auth | Keeps options open for token-based access without over-engineering now. |
+| Auth | Panel auth for Providers/Admins, Native session auth for Clients; Sanctum-ready for API | Keeps backend secured via Shield while Clients enjoy seamless session-based dashboard access. |
 
 ---
 
@@ -130,7 +145,7 @@ Base URL: `https://your-domain.test/api/v1`
 ### Example Requests
 
 ```http
-GET /api/v1/agencies?city=Toronto&verified=true&sort=-avg_rating
+GET /api/v1/agencies?city=Mumbai&verified=true&sort=-avg_rating
 Accept: application/json
 ```
 
@@ -143,7 +158,7 @@ Accept: application/json
 			"business_name": "Evergreen Events",
 			"description": "Full-service planning studio...",
 			"location": {
-				"city": "Toronto",
+				"city": "Mumbai",
 				"country": "India"
 			},
 			"stats": {
@@ -187,16 +202,16 @@ Accept: application/json
 			"name": "Florist"
 		},
 		"pricing": {
-			"min_price": 500,
-			"max_price": 3000,
+			"min_price": 50000,
+			"max_price": 300000,
 			"price_unit": "event"
 		},
 		"location": {
-			"city": "Vancouver",
+			"city": "New Delhi",
 			"country": "India"
 		},
 		"services": [
-			{"id": 11, "name": "Bouquet design", "price": 250}
+			{"id": 11, "name": "Premium Wedding Bouquet design", "price": 25000}
 		],
 		"media": {
 			"logo": "https://cdn.test/.../logo.png",
@@ -424,15 +439,6 @@ The project includes comprehensive seeders that populate the database with reali
 | Services | 71 | Vendor service offerings |
 | Packages | 84 | Agency and vendor packages |
 
-### Demo Login Credentials
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@shaadimandap.com` | `password` |
-| Agency | `vikram@dreamshaadi.in` | `password` |
-| Vendor | `arjun@pixelperfect.in` | `password` |
-| Client | `aarav.gupta@gmail.com` | `password` |
-
 ### Seeders Structure
 
 | Seeder | Purpose |
@@ -459,13 +465,11 @@ All seeders are **idempotent** - they check for existing data before inserting, 
 
 ---
 
-## 12. Roadmap / Next Steps
-1. **Expand public API** – expose clients, inquiries (read-only), availability calendar endpoints, search suggestions.
-2. **Authenticated API** – issue Sanctum tokens so agencies/vendors can use the same endpoints outside Filament.
-3. **Caching & performance** – add response caching + ETags once marketing traffic scales.
-4. **Analytics** – stream view counts/events to a warehouse or queue for deeper dashboards.
-5. **Automations** – schedule follow-up reminders for inquiries that stay unanswered for N days.
+## 12. Roadmap / Next Steps (Updated)
+Now that Phase 3/4 has provided rigid multitenancy, a robust booking state machine, and AI semantic search, our upcoming milestones are:
 
----
-
-Built with ❤️ by the Wedding Platform team. Contributions welcome—open an issue or PR with context about the panel or API you’re touching so we can review quickly.
+1. **Payment Gateway Integration (Razorpay / Stripe)** – Transitioning the booking pipeline's `deposit_amount` tracking into real-world automated financial transactions for the Indian market.
+2. **WebSockets / Laravel Reverb** – Elevating the new Database Push Notifications into fully real-time typed chat interfaces between clients, agencies, and vendors.
+3. **Advanced AI Tooling** – Expanding the Gemini model from backend search parsing to frontend utility (e.g., an AI-generated personalized wedding itinerary for logged-in clients).
+4. **Caching & Performance (Redis)** – Caching heavy Livewire rendering and database API queries for `Vendors` and `Agencies` to prepare for high-traffic scalability.
+5. **Authenticated REST API (Sanctum) & Headless Expansion** – Issuing tokens so agencies and vendors can utilize endpoints directly, allowing for a decoupled mobile app layer down the road.
